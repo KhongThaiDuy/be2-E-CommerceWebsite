@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id(); // 'user_id' INT(10) - Khóa chính, tự động tăng
-            $table->string('username', 191)->unique(); // 'username' VARCHAR(255) - Tên đăng nhập, duy nhất
+            $table->string('username')->unique(); // 'username' VARCHAR(255) - Tên đăng nhập, duy nhất
             $table->string('password'); // 'password' VARCHAR(255) - Mật khẩu, đã hash
             $table->string('email')->unique()->nullable(); // 'email' VARCHAR(50) - Email, duy nhất, có thể null
             $table->string('full_name'); // 'full_name' VARCHAR(255) - Họ và tên đầy đủ
