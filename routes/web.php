@@ -23,8 +23,7 @@ Route::get('/dashboard/homecrub', function () {
     return view('dashboard.homecrub');
 })->name('homecrub');
 
-// Hiển thị form đăng nhập
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login.form');
+
 
 // Xử lý Đăng ký / Đăng nhập / Đăng xuất
 Route::post('/register', [AuthController::class, 'register'])->name('register');
