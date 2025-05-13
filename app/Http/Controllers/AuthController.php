@@ -33,7 +33,7 @@ class AuthController extends Controller
         // Bạn có thể đăng nhập ngay sau khi đăng ký nếu muốn
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Registration successful!'); // Chuyển hướng đến trang chủ
+        return redirect()->route('dashboard')->with('success', 'Registration successful!'); // Chuyển hướng đến trang chủ
     }
 
     /**
