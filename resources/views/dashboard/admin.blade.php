@@ -21,168 +21,123 @@
     href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Rubik:wght@300;400;700&display=swap"
     rel="stylesheet">
 
-  <!-- Local CSS (asset helper) -->
+  <!-- Local CSS -->
   <link rel="stylesheet" href="{{ asset('asset/libs/datatables.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('asset/css/style-dashboardcard.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/style-dashboardcard.css') }}" />
 </head>
 
-<body>
-  <div class="main_container flex">
+<body class="bg-gray-100 text-gray-800 font-[Rubik]">
+  <div class="main_container flex min-h-screen">
 
     <!-- Sidebar -->
-    <aside class="aside select-none hidden md:block" id="aside">
-      <div class="sidebar_header flex justify-between items-center px-4">
-        <div class="logo flex items-center gap-2">
-          <img src="./assets/images/logo.svg" alt="Logo" class="expent_logo" />
-          
-        </div>
-        <div class="toggler">
-          <i class="fa-regular fa-circle-dot" id="toggler"></i>
+    <aside class="bg-white shadow-md w-64 hidden md:block" id="aside">
+      <div class="p-4 border-b flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <img src="{{ asset('assets/images/logo.svg') }}" alt="Logo" class="h-8">
+          <span class="font-bold text-xl text-gray-700">Admin</span>
         </div>
       </div>
 
-      <div class="sidebar_body">
-       
-
-          <li class="sidevar_item_wrapper">
-            <div class="sidebar_item flex items-center gap-2">
+      <nav class="px-4 py-6">
+        <ul class="space-y-2">
+          <li>
+            <a href="{{ route('admin-dashboard') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-200">
               <i class="fa-solid fa-gauge"></i>
-              <span class="title">Dashboard</span>
-            </div>
+              <span>Dashboard</span>
+            </a>
           </li>
-
-          
-          <div class="sidebar_item flex items-center gap-2">
+          <li>
+            <a href="{{ route('user.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-200">
               <i class="fa-solid fa-user"></i>
-              <a href="{{ route('user.index') }}" class="title">User</a>
-          </div>
-
-          
-
-          <li class="sidevar_item_wrapper">
-            <div class="sidebar_item flex items-center gap-2">
-              <i class="fa-solid fa-user-shield"></i>
-              <span class="title">Role & Permission</span>
-            </div>
-            <div class="sidebar_link_item hidden">
-              <ul class="link_item_wrapper">
-                <li class="link_item">
-                  <a href="#" class="flex items-center gap-2">
-                    <i class="fa-regular fa-circle link_item_icon"></i> Admin Dashboard
-                  </a>
-                </li>
-                <li class="link_item">
-                  <a href="#" class="flex items-center gap-2">
-                    <i class="fa-regular fa-circle link_item_icon"></i> Ecommerce Dashboard
-                  </a>
-                </li>
-              </ul>
-            </div>
+              <span>User</span>
+            </a>
           </li>
-
-          <li class="sidevar_item_wrapper">
-            <div class="sidebar_item flex items-center gap-2">
-              <i class="fa-solid fa-chart-bar"></i>
-              <span class="title">Category</span>
-            </div>
-            <div class="sidebar_link_item hidden">
-              <ul class="link_item_wrapper">
-                <li class="link_item">
-                  <a href="#" class="flex items-center gap-2">
-                    <i class="fa-regular fa-circle link_item_icon"></i> Admin Dashboard
-                  </a>
-                </li>
-                <li class="link_item">
-                  <a href="#" class="flex items-center gap-2">
-                    <i class="fa-regular fa-circle link_item_icon"></i> Ecommerce Dashboard
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <li>
+            <a href="{{ route('product.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-200">
+              <i class="fa-solid fa-user"></i>
+              <span>Product</span>
+            </a>
           </li>
-
-        
-      </div>
+          <li>
+            <a href="{{ route('blogs.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-200">
+              <i class="fa-solid fa-user"></i>
+              <span>Blogs</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('categories.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-200">
+              <i class="fa-solid fa-user"></i>
+              <span>Cetegories</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </aside>
 
-    <!-- Content -->
-    <main class="contant flex-1 flex flex-col">
+    <!-- Main content -->
+    <main class="content flex-1 flex flex-col">
 
       <!-- Header -->
-      <header class="header flex justify-between items-center p-4 shadow">
-        <div class="header-left flex items-center gap-4">
-          <div class="mobile_toggler text-2xl cursor-pointer md:hidden">
-            <i class="fa-solid fa-bars"></i>
-          </div>
+      <header class="bg-white shadow p-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+          <button class="text-2xl md:hidden"><i class="fa-solid fa-bars"></i></button>
           <form method="POST" action="{{ route('dangxuat') }}">
-        @csrf
-        <button type="submit" class="navbar-link text-red-500 font-bold flex items-center gap-2">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </button>
-      </form>
+            @csrf
+            <button type="submit" class="text-red-500 font-semibold flex items-center gap-2 hover:underline">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+          </form>
         </div>
 
-        <div class="header-right flex items-center gap-6">
-          <div class="search-box hidden md:block">
-            <input type="text" name="search" class="input-search" placeholder="Search..." />
-          </div>
-          <div class="theme-toggler">
-            <i class="fa-regular fa-sun text-2xl cursor-pointer" id="theme-toggler"></i>
+        <div class="flex items-center gap-6">
+          <div class="hidden md:block">
+            <input type="text" name="search" class="border rounded px-3 py-1 focus:outline-none" placeholder="Search..." />
           </div>
 
-          <div class="user-profile relative dropdown cursor-pointer">
-            <div class="nav-profile-img-container">
-            <img src="./assets/image/user.png" alt="User" class="rounded-full w-10 h-10" />
+          <button class="text-xl"><i class="fa-regular fa-sun"></i></button>
 
-            </div>
-
-            <div class="dropdown-wrapper hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
-              <div class="dropdown-contant">
-
-                <div class="user-info bg-[var(--primary-color)] text-white flex items-center gap-3 px-4 py-2">
-                  <div class="image w-12 h-12 rounded-full border p-1">
-                  <img src="./assets/image/user.png" alt="User" class="rounded-full w-10 h-10" />
-
-                  </div>
-                  <div class="user-detail">
-                    <h1>John Doe</h1>
-                    <p>johndoe@gmail.com</p>
-                  </div>
+          <div class="relative group">
+            <img src="./assets/image/user.png" alt="User" class="rounded-full w-10 h-10 cursor-pointer" />
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block z-10">
+              <div class="bg-blue-500 text-white p-4 flex gap-3 items-center rounded-t-md">
+                <img src="./assets/image/user.png" alt="User" class="w-10 h-10 rounded-full border" />
+                <div>
+                  <h1 class="font-semibold">John Doe</h1>
+                  <p class="text-sm">johndoe@gmail.com</p>
                 </div>
-
-                <ul class="dropdown-link flex flex-col">
-                  <li>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
-                      <i class="fa-regular fa-user"></i> Profile
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
-                      <i class="fa-solid fa-right-from-bracket"></i> Logout
-                    </a>
-                  </li>
-                </ul>
-
               </div>
+              <ul class="py-2">
+                <li>
+                  <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                    <i class="fa-regular fa-user"></i> Profile
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
-
+          
         </div>
+        
       </header>
 
+      <!-- Content Area -->
       
-
     </main>
-
   </div>
+
+  
 
   <!-- Scripts -->
   <script src="{{ asset('asset/libs/jquery-3.7.1.min.js') }}"></script>
   <script src="{{ asset('asset/libs/datatables.min.js') }}"></script>
   <script src="{{ asset('asset/libs/chart.js') }}"></script>
   <script src="{{ asset('asset/js/index.js') }}"></script>
-
 </body>
 
 </html>
