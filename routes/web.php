@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ProductController;
+
 
 // Trang chủ
 Route::get('/', function () {
@@ -42,3 +46,31 @@ Route::middleware(['auth'])->group(function () { // Assuming you have authentica
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('user.update');
     Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
 });
+
+
+
+// danh mục
+Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
+Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+//Bài viết
+
+Route::get('/admin/blogs', [BlogController::class, 'index'])->name('blogs.index'); // Hiển thị danh sách bài viết
+Route::get('/admin/blogs/create', [BlogController::class, 'create'])->name('blogs.create'); // Tạo bài viết mới
+Route::post('/admin/blogs', [BlogController::class, 'store'])->name('blogs.store'); // Lưu bài viết mới
+Route::get('/admin/blogs/{blog}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
+Route::put('/admin/blogs/{blog}', [BlogController::class, 'update'])->name('blogs.update'); // Cập nhật bài viết
+Route::delete('/admin/blogs/{blog}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+
+//Sản phẩm
+
+Route::get('/admin/product', [ProductController::class, 'index'])->name('product.index'); // Hiển thị danh sách sản phẩm
+Route::get('/admin/product/create', [ProductController::class, 'create'])->name('product.create'); // Tạo sản phẩm mới
+Route::post('/admin/product', [ProductController::class, 'store'])->name('product.store'); // Lưu sản phẩm mới
+Route::get('/admin/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit'); // Chỉnh sửa sản phẩm
+Route::put('/admin/product/{product}', [ProductController::class, 'update'])->name('product.update'); // Cập nhật sản phẩm
+Route::delete('/admin/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy'); // Xóa sản phẩm

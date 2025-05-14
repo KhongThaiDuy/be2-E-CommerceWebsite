@@ -69,10 +69,14 @@ class UserController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            // Consider deleting the old image if it exists
-            $imagePath = $request->file('image')->store('users', 'public');
-            $userData['image'] = $imagePath;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $destination = public_path('assets/images');
+            $file->move($destination, $filename);
+        
+            $user->image = 'assets/images/' . $filename;
         }
+        
 
         $user->update($userData);
 
