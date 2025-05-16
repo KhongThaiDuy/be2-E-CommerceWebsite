@@ -10,19 +10,28 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $query = User::query();
 
-        $users = User::query()
-            ->when($search, function ($query, $search) {
-                $query->where('username', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('full_name', 'like', "%{$search}%");
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        if ($request->filled('keyword')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('username', 'like', '%' . $request->keyword . '%')
+                ->orWhere('email', 'like', '%' . $request->keyword . '%')
+                ->orWhere('full_name', 'like', '%' . $request->keyword . '%');
+            });
+        }
 
-        return view('admin.users.index', compact('users', 'search'));
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        $sortOrder = $request->get('sort', 'asc');
+        $users = $query->orderBy('id', $sortOrder)->paginate(10)->withQueryString();
+
+        
+
+        return view('admin.users.index', compact('users'));
     }
+
 
     public function create()
     {
@@ -57,6 +66,8 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        //dd($user->id, $user->hash_id);
+        
         return view('admin.users.edit', compact('user'));
     }
 
@@ -77,16 +88,15 @@ class UserController extends Controller
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($request->password);
         }
-
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
             $destination = public_path('assets/images');
             $file->move($destination, $filename);
-
+        
             $user->image = 'assets/images/' . $filename;
         }
-
+        
 
         $user->update($userData);
 

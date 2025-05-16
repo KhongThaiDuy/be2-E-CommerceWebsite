@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
         ];
 
         // Thêm 10 user mới
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $users[] = [
                 'username' => "user$i",
                 'password' => Hash::make('12345678'),

@@ -38,7 +38,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('dangxuat');
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register.form');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
 
-Route::middleware(['auth'])->group(function () { // Assuming you have authentication set up
+Route::middleware(['auth'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'index'])->name('user.index');
     Route::get('/admin/users/create', [UserController::class, 'create'])->name('user.create');
     Route::post('/admin/users', [UserController::class, 'store'])->name('user.store');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Vinkla\Hashids\Facades\Hashids;
 
 class User extends Authenticatable
 {
@@ -26,5 +27,20 @@ class User extends Authenticatable
     public function blogs()
     {
         return $this->hasMany(Blog::class, 'user_id');
+    }
+
+    public function getHashIdAttribute()
+    {
+        return Hashids::encode($this->id);
+    }
+    
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $decoded = Hashids::decode($value);
+        if (count($decoded) === 0) {
+            abort(404);
+        }
+
+        return $this->where('id', $decoded[0])->firstOrFail();
     }
 }
