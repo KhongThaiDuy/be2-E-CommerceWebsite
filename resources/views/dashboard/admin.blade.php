@@ -92,7 +92,7 @@
 
         <div class="flex items-center gap-6">
           <div class="hidden md:block">
-            <input type="text" name="search" class="border rounded px-3 py-1 focus:outline-none" placeholder="Search..." />
+            <input type="text" name="search" value="{{ request('search') }}" class="border rounded px-3 py-1 focus:outline-none" placeholder="Search..." />
           </div>
 
           <button class="text-xl"><i class="fa-regular fa-sun"></i></button>
