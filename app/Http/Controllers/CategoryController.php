@@ -12,9 +12,12 @@ class CategoryController extends Controller
         $search = $request->input('search');
 
         $categories = Category::when($search, function ($query, $search) {
-             $query->where('category_name', 'like', "%{$search}%")
-             ->orwhere('category_id', 'like', "%{$search}%");
-        })->get();
+            $query->where('category_name', 'like', "%{$search}%")
+                ->orWhere('category_id', 'like', "%{$search}%");
+        })->paginate(10); // Phân trang 10 mục mỗi trang
+
+        // Giữ tham số search khi phân trang
+        $categories->appends(['search' => $search]);
 
         return view('admin.categories.index', compact('categories', 'search'));
     }
@@ -67,4 +70,12 @@ class CategoryController extends Controller
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Xoá thành công');
     }
+    public function showProducts($id)
+    {
+        $category = Category::with('products')->findOrFail($id);
+        $categories = Category::all(); // ← để hiển thị tất cả danh mục
+
+        return view('categories.home', compact('category', 'categories'));
+    }
+
 }
