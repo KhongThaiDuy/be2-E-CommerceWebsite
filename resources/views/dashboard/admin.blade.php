@@ -68,7 +68,7 @@
           <li>
             <a href="{{ route('categories.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-200">
               <i class="fa-solid fa-user"></i>
-              <span>Cetegories</span>
+              <span>Categories</span>
             </a>
           </li>
         </ul>
