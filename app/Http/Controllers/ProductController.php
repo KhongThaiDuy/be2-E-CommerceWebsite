@@ -108,6 +108,8 @@ class ProductController extends Controller
 }
 
 
+
+
     // Xoá sản phẩm
     public function destroy(Product $product)
     {
