@@ -2,24 +2,31 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
+use App\Models\User;
+use Vinkla\Hashids\Facades\Hashids;
 
-class AppServiceProvider extends ServiceProvider
+class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
+    public function boot()
     {
-        //
-    }
+        // Đăng ký route model binding với hashid
+        Route::bind('hashid', function ($value) {
+            $decoded = Hashids::decode($value);
+            if (count($decoded) === 0) {
+                abort(404);
+            }
+            return User::findOrFail($decoded[0]);
+        });
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        Schema::defaultStringLength(191);
+        $this->routes(function () {
+            Route::middleware('web')
+                ->group(base_path('routes/web.php'));
+
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/api.php'));
+        });
     }
 }

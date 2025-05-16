@@ -3,8 +3,9 @@
 @section('content')
     <div class="container mx-auto">
         <h1 class="text-2xl font-semibold mb-4">Edit User: {{ $user->full_name }}</h1>
-        <form action="{{ route('user.update', $user) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-            @csrf
+        <form action="{{ route('user.update', ['user' => $user->hash_id]) }}" method="POST">
+        
+        @csrf
             @method('PUT')
             <div>
                 <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
