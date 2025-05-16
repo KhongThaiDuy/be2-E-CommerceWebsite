@@ -77,6 +77,7 @@ Route::post('/admin/product', [ProductController::class, 'store'])->name('produc
 Route::get('/admin/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit'); // Chỉnh sửa sản phẩm
 Route::put('/admin/product/{product}', [ProductController::class, 'update'])->name('product.update'); // Cập nhật sản phẩm
 Route::delete('/admin/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy'); // Xóa sản phẩm
+Route::get('/products/home', [ProductController::class, 'home'])->name('products.home');
 
 //Gợi ý tìm kiếm
 Route::get('/categories/search/suggestions', [App\Http\Controllers\CategoryController::class, 'suggestions'])->name('categories.suggestions');

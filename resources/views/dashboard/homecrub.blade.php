@@ -88,7 +88,7 @@
 
             <ul class="navbar-list">
                 <li><a href="#home" class="navbar-link">Home</a></li>
-                <li><a href="#" class="navbar-link">Shop</a></li>
+                <li><a href="" class="navbar-link">Shop</a></li>
                 <li><a href="#" class="navbar-link">About</a></li>
                 <li><a href="{{ route('blogs.home') }}" class="navbar-link">Blog</a></li>
                 <li><a href="#" class="navbar-link">Contact</a></li>
