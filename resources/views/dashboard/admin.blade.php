@@ -33,10 +33,10 @@
     <!-- Sidebar -->
     <aside class="bg-white shadow-md w-64 hidden md:block" id="aside">
       <div class="p-4 border-b flex justify-between items-center">
-        <div class="flex items-center gap-2">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
           <img src="{{ asset('assets/images/logo.svg') }}" alt="Logo" class="h-8">
           <span class="font-bold text-xl text-gray-700">Admin</span>
-        </div>
+        </a>
       </div>
 
       <nav class="px-4 py-6">
@@ -92,7 +92,8 @@
 
         <div class="flex items-center gap-6">
           <div class="hidden md:block">
-            <input type="text" name="search" value="{{ request('search') }}" class="border rounded px-3 py-1 focus:outline-none" placeholder="Search..." />
+            <input type="text" name="search" value="{{ request('search') }}"
+              class="border rounded px-3 py-1 focus:outline-none" placeholder="Search..." />
           </div>
 
           <button class="text-xl"><i class="fa-regular fa-sun"></i></button>
@@ -121,17 +122,17 @@
               </ul>
             </div>
           </div>
-          
+
         </div>
-        
+
       </header>
 
       <!-- Content Area -->
-      
+
     </main>
   </div>
 
-  
+
 
   <!-- Scripts -->
   <script src="{{ asset('asset/libs/jquery-3.7.1.min.js') }}"></script>

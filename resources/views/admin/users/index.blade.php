@@ -14,6 +14,11 @@
             <form method="GET" action="{{ route('user.index') }}" class="flex items-center gap-2 w-full md:w-auto">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
                     class="px-4 py-2 rounded border text-sm focus:outline-none flex-1 md:w-64" />
+                <div id="suggestions"
+                    class="absolute bg-white border border-gray-300 rounded mt-1 w-full md:w-64 hidden z-10 shadow-md">
+                </div>
+
+
                 <button type="submit" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
                     <i class="fa fa-search"></i>
                 </button>
@@ -88,3 +93,47 @@
         </div>
     </div>
 @endsection
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    const input = $('input[name="search"]');
+    const suggestionBox = $('#suggestions');
+
+    input.on('keyup', function () {
+      let query = $(this).val();
+
+      if (query.length >= 2) {
+        $.ajax({
+          url: '{{ route("users.suggestions") }}',
+          data: { q: query },
+          success: function (data) {
+            suggestionBox.empty();
+            if (data.length) {
+              data.forEach(item => {
+                suggestionBox.append(`<div class="px-4 py-2 hover:bg-gray-200 cursor-pointer">${item}</div>`);
+              });
+              suggestionBox.show();
+            } else {
+              suggestionBox.hide();
+            }
+          }
+        });
+      } else {
+        suggestionBox.hide();
+      }
+    });
+
+    // Khi chọn gợi ý
+    $(document).on('click', '#suggestions div', function () {
+      input.val($(this).text());
+      suggestionBox.hide();
+    });
+
+    // Ẩn gợi ý khi click ra ngoài
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('#suggestions, input[name="search"]').length) {
+        suggestionBox.hide();
+      }
+    });
+  });
+</script>

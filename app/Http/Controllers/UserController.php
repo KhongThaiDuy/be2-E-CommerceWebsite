@@ -95,7 +95,19 @@ class UserController extends Controller
     }
 
     
+  
+    public function suggestions(Request $request)
+{
+    $query = $request->get('q');
 
+    $suggestions = User::where('username', 'like', "%{$query}%")
+        ->orWhere('full_name', 'like', "%{$query}%")
+        ->orWhere('email', 'like', "%{$query}%")
+        ->limit(5)
+        ->pluck('username'); // Hoặc ->pluck('full_name') nếu muốn hiển thị tên đầy đủ
+
+    return response()->json($suggestions);
+}
 
 
 
