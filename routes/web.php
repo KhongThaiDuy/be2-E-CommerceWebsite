@@ -56,11 +56,15 @@ Route::post('/admin/categories', [CategoryController::class, 'store'])->name('ca
 Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
 Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
 Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+Route::get('/categories/{id}/products', [CategoryController::class, 'showProducts'])->name('categories.products');
+
 
 //Bài viết
 
 Route::get('/blogs', [BlogController::class, 'showAll'])->name('blogs.home');
 Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show');
+
+
 
 Route::get('/admin/blogs', [BlogController::class, 'index'])->name('blogs.index'); // Hiển thị danh sách bài viết
 Route::get('/admin/blogs/create', [BlogController::class, 'create'])->name('blogs.create'); // Tạo bài viết mới
