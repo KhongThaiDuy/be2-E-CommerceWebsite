@@ -30,6 +30,8 @@
   <!-- Link Ionicons -->
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
 
 </head>
 
@@ -91,7 +93,7 @@
 
             <ul class="navbar-list">
                 <li><a href="#home" class="navbar-link">Home</a></li>
-                <li><a href="#" class="navbar-link">Shop</a></li>
+                <li><a href="{{ route('products.home') }}" class="navbar-link">Shop</a></li>
                 <li><a href="#" class="navbar-link">About</a></li>
                 <li><a href="{{ route('blogs.home') }}" class="navbar-link">Blog</a></li>
                 <li><a href="#" class="navbar-link">Contact</a></li>
