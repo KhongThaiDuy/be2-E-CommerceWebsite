@@ -50,6 +50,18 @@ class CategoryController extends Controller
         return redirect()->route('categories.index')->with('success', 'Cập nhật thành công');
     }
 
+    public function suggestions(Request $request)
+{
+    $query = $request->get('q');
+
+    $suggestions = Category::where('category_name', 'like', "%{$query}%")
+        ->limit(5)
+        ->pluck('category_name');
+
+    return response()->json($suggestions);
+}
+
+
     public function destroy(Category $category)
     {
         $category->delete();
