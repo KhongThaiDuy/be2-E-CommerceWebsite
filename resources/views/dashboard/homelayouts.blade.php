@@ -31,6 +31,54 @@
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+
+<style>
+  .dropdown-container {
+      position: relative;
+      display: inline-block;
+  }
+
+
+  .dropdown-btn {
+      
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 5px;
+  }
+
+  .dropdown-list {
+      display: none;
+      position: absolute;
+      background-color: #fff;
+      min-width: 200px;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      z-index: 1;
+      margin-top: 4px;
+      padding: 0;
+  }
+
+  .dropdown-list li {
+      list-style: none;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+  }
+
+  .dropdown-list li a {
+      text-decoration: none;
+      color: #333;
+      display: block;
+  }
+
+  .dropdown-list li:hover {
+      background-color: #f0f0f0;
+  }
+</style>
 </head>
 
 <body>
@@ -67,12 +115,6 @@
 </form>
 @endauth
 
-
-
-
-
-
-
         <button class="nav-open-btn" data-nav-open-btn aria-label="Open Menu">
             <span></span>
             <span></span>
@@ -90,9 +132,25 @@
             </div>
 
             <ul class="navbar-list">
-                <li><a href="#home" class="navbar-link">Home</a></li>
-                <li><a href="#" class="navbar-link">Shop</a></li>
+                <li><a href="{{ route('dashboard') }}" class="navbar-link">Home</a></li>
+                <li><a href="{{ route('products.home') }}" class="navbar-link">Shop</a></li>
                 <li><a href="#" class="navbar-link">About</a></li>
+                <div class="dropdown-container">
+                  <button class="dropdown-btn" onclick="toggleDropdown()">Categories⯆</button>
+                  <ul class="dropdown-list" id="dropdownList">
+                      @php
+                          $categories = \App\Models\Category::all();
+                      @endphp
+                      @foreach ($categories as $category)
+                          <li>
+                              <a href="{{ route('categories.products', $category->category_id) }}">
+                                  {{ $category->category_name }}
+                              </a>
+                          </li>
+                      @endforeach
+                  </ul>
+              </div>
+
                 <li><a href="{{ route('blogs.home') }}" class="navbar-link">Blog</a></li>
                 <li><a href="#" class="navbar-link">Contact</a></li>
 
@@ -138,3 +196,19 @@
 </body>
 
 </html>
+
+<script>
+  function toggleDropdown() {
+    const list = document.getElementById('dropdownList');
+    list.style.display = (list.style.display === 'block') ? 'none' : 'block';
+  }
+
+  // Optional: click outside to close
+  document.addEventListener('click', function(e) {
+    const btn = document.querySelector('.dropdown-btn');
+    const list = document.getElementById('dropdownList');
+    if (!btn.contains(e.target) && !list.contains(e.target)) {
+      list.style.display = 'none';
+    }
+  });
+</script>
