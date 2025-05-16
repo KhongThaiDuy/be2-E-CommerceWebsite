@@ -8,11 +8,30 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all(); // Or paginate for a large number of users
+        $query = User::query();
+
+        if ($request->filled('keyword')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('username', 'like', '%' . $request->keyword . '%')
+                ->orWhere('email', 'like', '%' . $request->keyword . '%')
+                ->orWhere('full_name', 'like', '%' . $request->keyword . '%');
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        $sortOrder = $request->get('sort', 'asc');
+        $users = $query->orderBy('id', $sortOrder)->paginate(10)->withQueryString();
+
+        
+
         return view('admin.users.index', compact('users'));
     }
+
 
     public function create()
     {
@@ -47,6 +66,8 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        //dd($user->id, $user->hash_id);
+        
         return view('admin.users.edit', compact('user'));
     }
 
@@ -67,7 +88,6 @@ class UserController extends Controller
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($request->password);
         }
-
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -82,6 +102,11 @@ class UserController extends Controller
 
         return redirect()->route('user.index')->with('success', 'User updated successfully!');
     }
+
+    
+
+
+
 
     public function destroy(User $user)
     {

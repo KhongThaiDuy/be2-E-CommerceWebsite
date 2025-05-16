@@ -1,63 +1,85 @@
-@extends('dashboard.app') 
+@extends('dashboard.app')
 
 @section('content')
-    <div class="container mx-auto">
-        <h1 class="text-2xl font-semibold mb-4">User Management</h1>
-        <div class="mb-4">
-            <a href="{{ route('user.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                Add New User
-            </a>
-        </div>
+<div class="container py-4">
+    <h1 class="text-2xl font-semibold mb-4">User Management</h1>
 
-        @if (session('success'))
-            <div class="bg-green-200 text-green-800 py-2 px-4 rounded mb-4">
-                {{ session('success') }}
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <form action="{{ route('user.index') }}" method="GET" class="row g-2">
+            <div class="col">
+                <input type="text" name="keyword" class="form-control" placeholder="Tìm tên hoặc email" value="{{ request('keyword') }}">
             </div>
-        @endif
+            <div class="col">
+                <select name="sort" class="form-select">
+                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>ID tăng dần</option>
+                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>ID giảm dần</option>
+                </select>
+            </div>
 
-        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Images</th>
-                        <th scope="col" class="relative px-6 py-3">
-                            <span class="sr-only">Actions</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach ($users as $user)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $user->id }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $user->username }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $user->full_name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ ucfirst($user->role) }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @if ($user->image)
-                                <img src="{{ asset($user->image) }}" alt="{{ $user->username }}" class="w-10 h-10 rounded-full object-cover">
-                                    @else
-                                    <span class="text-gray-400 italic">No image</span>
-                                @endif
-                            </td>  
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="{{ route('user.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                <form action="{{ route('user.destroy', $user) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900 ml-2" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            </div>
+        </form>
 
-            </table>
-        </div>
+        <a href="{{ route('user.create') }}" class="btn btn-success">Add New User</a>
     </div>
+
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Image</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($users as $user)
+                    <tr>
+                        <td>{{ $user->id }}</td>
+                        <td>{{ $user->username }}</td>
+                        <td>{{ $user->full_name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>{{ ucfirst($user->role) }}</td>
+                        <td>
+                            @if ($user->image)
+                                <img src="{{ asset($user->image) }}" alt="{{ $user->username }}" class="rounded-circle" width="40" height="40">
+                            @else
+                                <span class="text-muted fst-italic">No image</span>
+                            @endif
+                        </td>
+                        <td class="text-end">
+                        <a href="{{ route('user.edit', $user->hash_id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form action="{{ route('user.destroy', $user->hash_id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">Không có người dùng nào.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3">
+        {{ $users->links('pagination::bootstrap-5') }}
+    </div>
+</div>
 @endsection

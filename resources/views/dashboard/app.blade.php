@@ -18,6 +18,9 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ asset('asset/css/style-dashboardcard.css') }}">
 </head>
@@ -86,7 +89,7 @@
           </form>
         </div>
         <div class="flex items-center gap-6">
-          <input type="text" placeholder="Search..." class="hidden md:block px-4 py-2 rounded border text-sm" />
+          
           <div class="relative">
             <img src="{{ asset('assets/image/user.png') }}" class="w-10 h-10 rounded-full cursor-pointer" />
           </div>
