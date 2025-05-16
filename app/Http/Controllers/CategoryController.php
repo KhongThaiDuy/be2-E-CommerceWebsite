@@ -7,11 +7,18 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
-        return view('admin.categories.index', compact('categories'));
+        $search = $request->input('search');
+
+        $categories = Category::when($search, function ($query, $search) {
+             $query->where('category_name', 'like', "%{$search}%")
+             ->orwhere('category_id', 'like', "%{$search}%");
+        })->get();
+
+        return view('admin.categories.index', compact('categories', 'search'));
     }
+
 
     public function create()
     {

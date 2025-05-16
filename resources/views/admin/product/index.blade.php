@@ -8,7 +8,7 @@
             <!-- Button -->
             <a href="{{ route('product.create') }}"
                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full md:w-auto text-center">
-                Add New User
+                Add New Product
             </a>
 
             <!-- Search Form -->

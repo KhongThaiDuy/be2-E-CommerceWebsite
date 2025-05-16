@@ -8,11 +8,20 @@ use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blogs = Blog::with('user')->get(); // Lấy danh sách các bài viết kèm theo người dùng
-        return view('admin.blogs.index', compact('blogs'));
+        $search = $request->input('search');
+
+        $blogs = Blog::with('user')
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
+            })
+            ->get();
+
+        return view('admin.blogs.index', compact('blogs', 'search'));
     }
+
 
     public function create()
     {
@@ -73,16 +82,16 @@ class BlogController extends Controller
         return redirect()->route('blogs.index')->with('success', 'Cập nhật bài viết thành công!');
     }
 
-    
+
     public function destroy(Blog $blog)
     {
         // Xoá ảnh nếu có
         if ($blog->image) {
             \Storage::delete('public/' . $blog->image);
         }
-    
+
         $blog->delete();
         return redirect()->route('blogs.index')->with('success', 'Xoá bài viết thành công!');
     }
-    
+
 }

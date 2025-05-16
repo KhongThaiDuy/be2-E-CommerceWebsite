@@ -4,16 +4,31 @@
     <div class="container mx-auto">
         <h1 class="text-2xl font-semibold mb-4">Blog Management</h1>
         
-        <div class="mb-4">
-            <a href="{{ route('blogs.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+       <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <!-- Button -->
+            <a href="{{ route('blogs.create') }}"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full md:w-auto text-center">
                 Add New Blog
             </a>
+
+            <!-- Search Form -->
+            <form method="GET" action="{{ route('blogs.index') }}" class="flex items-center gap-2 w-full md:w-auto">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
+                    class="px-4 py-2 rounded border text-sm focus:outline-none flex-1 md:w-64" />
+                <button type="submit" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
+                    <i class="fa fa-search"></i>
+                </button>
+            </form>
         </div>
 
         @if (session('success'))
             <div class="bg-green-200 text-green-800 py-2 px-4 rounded mb-4">
                 {{ session('success') }}
             </div>
+        @endif
+
+         @if ($blogs->isEmpty())
+            <p class="text-gray-500 italic">No blogs found.</p>
         @endif
 
         <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
