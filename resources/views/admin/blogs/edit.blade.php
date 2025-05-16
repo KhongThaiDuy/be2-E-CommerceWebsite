@@ -1,43 +1,59 @@
 @extends('dashboard.app')
 
 @section('content')
-    <div class="container">
-        <h1 class="my-4">Chỉnh sửa bài viết</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-warning"><i class="fas fa-edit me-2"></i>Chỉnh sửa bài viết</h1>
 
         <form action="{{ route('blogs.update', $blog->post_id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
-            <div class="form-group">
-                <label for="title">Tiêu đề</label>
-                <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $blog->title) }}" required>
+            <div class="mb-3">
+                <label for="title" class="form-label fw-bold text-dark">📝 Tiêu đề</label>
+                <input type="text" class="form-control border-primary" id="title" name="title" value="{{ old('title', $blog->title) }}" required>
                 @error('title')
-                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                    <div class="text-danger small">{{ $message }}</div>
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label for="content">Nội dung</label>
-                <textarea class="form-control" id="content" name="content" rows="5" required>{{ old('content', $blog->content) }}</textarea>
+            <div class="mb-3">
+                <label for="content" class="form-label fw-bold text-dark">📄 Nội dung</label>
+                <textarea class="form-control border-success" id="content" name="content" rows="5" required>{{ old('content', $blog->content) }}</textarea>
                 @error('content')
-                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                    <div class="text-danger small">{{ $message }}</div>
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label for="image">Hình ảnh</label>
-                <input type="file" class="form-control" id="image" name="image">
+            <div class="mb-3">
+                <label for="image" class="form-label fw-bold text-dark">🖼️ Hình ảnh</label>
+                <input type="file" class="form-control border-info" id="image" name="image">
                 @if ($blog->image)
                     <div class="mt-2">
-                        <img src="{{ asset('storage/' . $blog->image) }}" alt="Image" style="max-width: 200px;">
+                        <img src="{{ asset('storage/' . $blog->image) }}" alt="Image" class="img-thumbnail" style="max-width: 200px;">
                     </div>
                 @endif
                 @error('image')
-                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                    <div class="text-danger small">{{ $message }}</div>
                 @enderror
             </div>
 
-            <button type="submit" class="btn btn-warning">Cập nhật bài viết</button>
+            <div class="mb-3">
+                <label for="rating" class="form-label fw-bold text-dark">⭐ Đánh giá (1-5)</label>
+                <input type="number" class="form-control border-warning" id="rating" name="rating" min="1" max="5" value="{{ old('rating', $blog->rating) }}" required>
+                @error('rating')
+                    <div class="text-danger small">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-save me-1"></i> Cập nhật bài viết
+                </button>
+
+                <a href="{{ route('blogs.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Quay lại
+                </a>
+            </div>
         </form>
     </div>
 @endsection
