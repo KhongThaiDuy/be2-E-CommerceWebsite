@@ -7,11 +7,18 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
-        return view('admin.categories.index', compact('categories'));
+        $search = $request->input('search');
+
+        $categories = Category::when($search, function ($query, $search) {
+             $query->where('category_name', 'like', "%{$search}%")
+             ->orwhere('category_id', 'like', "%{$search}%");
+        })->get();
+
+        return view('admin.categories.index', compact('categories', 'search'));
     }
+
 
     public function create()
     {
@@ -42,6 +49,18 @@ class CategoryController extends Controller
         $category->update($request->all());
         return redirect()->route('categories.index')->with('success', 'Cập nhật thành công');
     }
+
+    public function suggestions(Request $request)
+{
+    $query = $request->get('q');
+
+    $suggestions = Category::where('category_name', 'like', "%{$query}%")
+        ->limit(5)
+        ->pluck('category_name');
+
+    return response()->json($suggestions);
+}
+
 
     public function destroy(Category $category)
     {

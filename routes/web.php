@@ -59,6 +59,9 @@ Route::delete('/admin/categories/{category}', [CategoryController::class, 'destr
 
 //Bài viết
 
+Route::get('/blogs', [BlogController::class, 'showAll'])->name('blogs.home');
+Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show');
+
 Route::get('/admin/blogs', [BlogController::class, 'index'])->name('blogs.index'); // Hiển thị danh sách bài viết
 Route::get('/admin/blogs/create', [BlogController::class, 'create'])->name('blogs.create'); // Tạo bài viết mới
 Route::post('/admin/blogs', [BlogController::class, 'store'])->name('blogs.store'); // Lưu bài viết mới
@@ -74,3 +77,11 @@ Route::post('/admin/product', [ProductController::class, 'store'])->name('produc
 Route::get('/admin/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit'); // Chỉnh sửa sản phẩm
 Route::put('/admin/product/{product}', [ProductController::class, 'update'])->name('product.update'); // Cập nhật sản phẩm
 Route::delete('/admin/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy'); // Xóa sản phẩm
+
+//Gợi ý tìm kiếm
+Route::get('/categories/search/suggestions', [App\Http\Controllers\CategoryController::class, 'suggestions'])->name('categories.suggestions');
+Route::get('/products/suggestions', [ProductController::class, 'suggestions'])->name('products.suggestions');
+Route::get('/users/suggestions', [UserController::class, 'suggestions'])->name('users.suggestions');
+
+
+

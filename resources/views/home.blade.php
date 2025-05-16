@@ -44,16 +44,17 @@
         </button>
       </div>
 
-      <a href="#" class="logo">
-      <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
+      <a href="{{ route('home') }}" class="logo">
+        <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
       </a>
+
 
       <div class="header-actions">
 
-      <a href="{{ route('login') }}" class="header-action-btn">
-        <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
-        <p class="header-action-label">Sign in</p>
-      </a>
+        <a href="{{ route('login') }}" class="header-action-btn">
+          <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+          <p class="header-action-label">Sign in</p>
+        </a>
 
         <button class="header-action-btn">
           <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
@@ -90,7 +91,7 @@
         <div class="navbar-top">
 
           <a href="#" class="logo">
-          <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
+            <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
           </a>
 
           <button class="nav-close-btn" data-nav-close-btn aria-label="Close Menu">
