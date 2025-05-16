@@ -20,7 +20,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Rubik:wght@300;400;700&display=swap"
     rel="stylesheet">
-
+  
   <!-- Local CSS -->
   <link rel="stylesheet" href="{{ asset('asset/libs/datatables.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('asset/css/style-dashboardcard.css') }}" />
