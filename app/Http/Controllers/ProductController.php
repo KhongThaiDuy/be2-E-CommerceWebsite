@@ -10,19 +10,37 @@ class ProductController extends Controller
 {
     // Hiển thị tất cả sản phẩm
     public function index(Request $request)
-    {
-          $search = $request->input('search');
+{
+    $search = $request->input('search');
+    $sort = $request->input('sort');
 
     $products = Product::with('category')
-        ->when($search, function($query, $search) {
+        ->when($search, function ($query, $search) {
             $query->where('product_name', 'like', "%{$search}%")
-                  ->orWhere('price', 'like', "%{$search}%")
-                  ->orWhere('quantity', 'like', "%{$search}%");
+                ->orWhere('price', 'like', "%{$search}%")
+                ->orWhere('quantity', 'like', "%{$search}%");
+        })
+        ->when($sort, function ($query, $sort) {
+            switch ($sort) {
+                case 'price_asc':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'quantity_asc':
+                    $query->orderBy('quantity', 'asc');
+                    break;
+                case 'quantity_desc':
+                    $query->orderBy('quantity', 'desc');
+                    break;
+            }
+            
         })
         ->get();
 
-    return view('admin.product.index', compact('products', 'search'));
-    }
+    return view('admin.product.index', compact('products', 'search', 'sort'));
+}
     
 
 
@@ -111,17 +129,26 @@ class ProductController extends Controller
 public function home(Request $request)
 {
     $search = $request->input('search');
+    $sort = $request->input('sort');
 
     $products = Product::with('category')
-        ->when($search, function($query, $search) {
+        ->when($search, function ($query, $search) {
             $query->where('product_name', 'like', "%{$search}%")
-                  ->orWhere('price', 'like', "%{$search}%")
-                  ->orWhere('quantity', 'like', "%{$search}%");
+                ->orWhere('price', 'like', "%{$search}%")
+                ->orWhere('quantity', 'like', "%{$search}%");
+        })
+        ->when($sort, function ($query, $sort) {
+            if ($sort === 'asc') {
+                $query->orderBy('price', 'asc');
+            } elseif ($sort === 'desc') {
+                $query->orderBy('price', 'desc');
+            }
         })
         ->get();
 
-    return view('products.home', compact('products', 'search'));
+    return view('products.home', compact('products', 'search', 'sort'));
 }
+
 
 
     // Xoá sản phẩm
