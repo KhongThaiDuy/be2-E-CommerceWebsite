@@ -9,10 +9,19 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     // Hiển thị tất cả sản phẩm
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->get(); // Lấy tất cả sản phẩm cùng với thông tin danh mục
-        return view('admin.product.index', compact('products')); // Truyền đúng biến 'products'
+          $search = $request->input('search');
+
+    $products = Product::with('category')
+        ->when($search, function($query, $search) {
+            $query->where('product_name', 'like', "%{$search}%")
+                  ->orWhere('price', 'like', "%{$search}%")
+                  ->orWhere('quantity', 'like', "%{$search}%");
+        })
+        ->get();
+
+    return view('admin.product.index', compact('products', 'search'));
     }
     
 

@@ -16,6 +16,7 @@ class UserController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where('username', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('role', 'like', "%{$search}%")
                     ->orWhere('full_name', 'like', "%{$search}%");
             })
             ->orderBy('created_at', 'desc')

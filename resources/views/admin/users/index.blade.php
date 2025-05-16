@@ -26,6 +26,9 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if ($users->isEmpty())
+            <p class="text-gray-500 italic">No users found.</p>
+        @endif
 
         <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
             <table class="min-w-full divide-y divide-gray-200">
