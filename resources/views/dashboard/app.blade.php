@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,8 +13,8 @@
 
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
@@ -31,10 +32,10 @@
     <!-- Sidebar -->
     <aside class="w-64 bg-white shadow-lg hidden md:block">
       <div class="p-4 border-b flex justify-between items-center">
-        <div class="flex items-center gap-2">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
           <img src="{{ asset('assets/images/logo.svg') }}" alt="Logo" class="h-8">
           <span class="font-bold text-xl text-gray-700">Admin</span>
-        </div>
+        </a>
       </div>
       <nav class="px-4 py-6">
         <ul class="space-y-2">
@@ -65,7 +66,7 @@
           <li>
             <a href="{{ route('categories.index') }}" class="flex items-center gap-3 p-2 rounded hover:bg-gray-200">
               <i class="fa-solid fa-user"></i>
-              <span>Cetegories</span>
+              <span>Categories</span>
             </a>
           </li>
         </ul>
@@ -113,4 +114,5 @@
     });
   </script>
 </body>
+
 </html>
