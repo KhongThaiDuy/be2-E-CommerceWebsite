@@ -1,11 +1,10 @@
 @extends('dashboard.homelayouts')
-
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold mb-8 text-center">Danh sách sản phẩm</h1>
 
     <!-- Form tìm kiếm -->
-    <form action="{{ route('home') }}" method="GET" class="mb-8 max-w-md mx-auto">
+    <form action="{{ route('products.home') }}" method="GET" class="mb-8 max-w-md mx-auto">
         <input
             type="text"
             name="search"
@@ -50,6 +49,4 @@
         @endforelse
     </div>
 </div>
-
-
-@endsection 
+@endsection
