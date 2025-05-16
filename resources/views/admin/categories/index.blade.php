@@ -13,6 +13,7 @@
     <form method="GET" action="{{ route('categories.index') }}" class="flex items-center gap-2 w-full md:w-auto">
       <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
       class="px-4 py-2 rounded border text-sm focus:outline-none flex-1 md:w-64" />
+      
       <div id="suggestions"
      class="absolute bg-white border border-gray-300 rounded mt-1 w-full md:w-64 hidden z-10 shadow-md">
 </div>

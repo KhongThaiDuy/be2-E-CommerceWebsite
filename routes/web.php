@@ -76,3 +76,5 @@ Route::put('/admin/product/{product}', [ProductController::class, 'update'])->na
 Route::delete('/admin/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy'); // Xóa sản phẩm
 
 Route::get('/categories/search/suggestions', [App\Http\Controllers\CategoryController::class, 'suggestions'])->name('categories.suggestions');
+Route::get('/products/suggestions', [ProductController::class, 'suggestions'])->name('products.suggestions');
+

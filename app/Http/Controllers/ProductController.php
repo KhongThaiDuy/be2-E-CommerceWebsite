@@ -96,6 +96,17 @@ class ProductController extends Controller
         return redirect()->route('blogs.index')->with('success', 'Cập nhật bài viết thành công!');
     }
     
+  public function suggestions(Request $request)
+{
+    $query = $request->get('q');
+
+    $suggestions = Product::where('product_name', 'like', "%{$query}%")
+        ->limit(5)
+        ->pluck('product_name');
+
+    return response()->json($suggestions);
+}
+
 
     // Xoá sản phẩm
     public function destroy(Product $product)
