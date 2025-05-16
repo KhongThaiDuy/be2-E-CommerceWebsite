@@ -59,6 +59,9 @@ Route::delete('/admin/categories/{category}', [CategoryController::class, 'destr
 
 //Bài viết
 
+Route::get('/blogs', [BlogController::class, 'showAll'])->name('blogs.home');
+Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show');
+
 Route::get('/admin/blogs', [BlogController::class, 'index'])->name('blogs.index'); // Hiển thị danh sách bài viết
 Route::get('/admin/blogs/create', [BlogController::class, 'create'])->name('blogs.create'); // Tạo bài viết mới
 Route::post('/admin/blogs', [BlogController::class, 'store'])->name('blogs.store'); // Lưu bài viết mới

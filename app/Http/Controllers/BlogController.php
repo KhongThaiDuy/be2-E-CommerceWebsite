@@ -3,16 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blogs = Blog::with('user')->get(); // Lấy danh sách các bài viết kèm theo người dùng
+        $query = Blog::with('user');
+    
+        if ($request->has('search') && $request->search != '') {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+    
+        $blogs = $query->latest()->paginate(6); // Áp dụng phân trang ở đây
+    
         return view('admin.blogs.index', compact('blogs'));
     }
+    
+
 
     public function create()
     {
@@ -32,16 +41,25 @@ class BlogController extends Controller
         $blog->title = $request->title;
         $blog->content = $request->content;
         $blog->user_id = auth()->user()->id;
-        $blog->rating = $request->rating ?? 1; // sửa lại đúng biến $blog
+        $blog->rating = $request->rating ?? 1;
 
         if ($request->hasFile('image')) {
-            $blog->image = $request->file('image')->store('images', 'public');
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $destination = public_path('assets/blogs');
+
+            // Tạo thư mục nếu chưa có
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+            $blog->image = 'assets/blogs/' . $filename;
         }
 
         $blog->save();
         return redirect()->route('blogs.index')->with('success', 'Thêm bài viết thành công!');
     }
-
 
     public function edit($post_id)
     {
@@ -63,26 +81,47 @@ class BlogController extends Controller
 
         if ($request->hasFile('image')) {
             // Xoá ảnh cũ nếu có
-            if ($blog->image) {
-                \Storage::delete('public/' . $blog->image);
+            if ($blog->image && file_exists(public_path($blog->image))) {
+                unlink(public_path($blog->image));
             }
-            $blog->image = $request->file('image')->store('images', 'public');
+
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $destination = public_path('assets/blogs');
+
+            // Tạo thư mục nếu chưa có
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+            $blog->image = 'assets/blogs/' . $filename;
         }
 
         $blog->save();
         return redirect()->route('blogs.index')->with('success', 'Cập nhật bài viết thành công!');
     }
 
-    
     public function destroy(Blog $blog)
     {
         // Xoá ảnh nếu có
-        if ($blog->image) {
-            \Storage::delete('public/' . $blog->image);
+        if ($blog->image && file_exists(public_path($blog->image))) {
+            unlink(public_path($blog->image));
         }
-    
+
         $blog->delete();
         return redirect()->route('blogs.index')->with('success', 'Xoá bài viết thành công!');
     }
-    
+    public function showAll()
+    {
+        
+        $blogs = Blog::latest()->paginate(6); // Hoặc paginate nếu cần
+        return view('blogs.home', compact('blogs'));
+    }
+    public function show($id)
+    {
+        $blog = Blog::with('user')->findOrFail($id);
+        return view('blogs.show', compact('blog'));
+    }
+
 }
