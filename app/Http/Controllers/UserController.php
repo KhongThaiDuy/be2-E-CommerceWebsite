@@ -8,10 +8,20 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all(); // Or paginate for a large number of users
-        return view('admin.users.index', compact('users'));
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where('username', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('full_name', 'like', "%{$search}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('admin.users.index', compact('users', 'search'));
     }
 
     public function create()
@@ -73,15 +83,20 @@ class UserController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $destination = public_path('assets/images');
             $file->move($destination, $filename);
-        
+
             $user->image = 'assets/images/' . $filename;
         }
-        
+
 
         $user->update($userData);
 
         return redirect()->route('user.index')->with('success', 'User updated successfully!');
     }
+
+    
+
+
+
 
     public function destroy(User $user)
     {
