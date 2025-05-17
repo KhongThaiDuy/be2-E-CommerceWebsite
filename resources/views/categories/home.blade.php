@@ -3,16 +3,7 @@
 @section('content')
 <div class="container py-4">
 
-  <ul class="category-list mb-4">
-    @foreach ($categories as $cat)
-      <li class="category-item d-inline-block mr-2">
-        <a href="{{ route('categories.products', $cat->category_id) }}" class="btn btn-secondary">
-          {{ $cat->category_name }}
-        </a>
-      </li>
-    @endforeach
-  </ul>
-
+ 
   <h2 class="text-2xl font-bold mb-4">Danh mục: {{ $category->category_name }}</h2>
 
 @if ($category->products->isEmpty())

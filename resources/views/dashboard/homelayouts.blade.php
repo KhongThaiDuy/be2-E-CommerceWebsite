@@ -43,11 +43,11 @@
 
   .dropdown-btn {
       
-      color: white;
+      color: black;
       padding: 10px 16px;
       border: none;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: ;
       border-radius: 5px;
   }
 
@@ -134,9 +134,9 @@
             <ul class="navbar-list">
                 <li><a href="{{ route('dashboard') }}" class="navbar-link">Home</a></li>
                 <li><a href="{{ route('products.home') }}" class="navbar-link">Shop</a></li>
-                <li><a href="#" class="navbar-link">About</a></li>
+         
                 <div class="dropdown-container">
-                  <button class="dropdown-btn" onclick="toggleDropdown()">Categories⯆</button>
+                  <button class="dropdown-btn" onclick="toggleDropdown()">Categories</button>
                   <ul class="dropdown-list" id="dropdownList">
                       @php
                           $categories = \App\Models\Category::all();
