@@ -77,7 +77,7 @@
         <td class="px-6 py-4 whitespace-nowrap">{{ $product->quantity }}</td>
         <td class="px-6 py-4 whitespace-nowrap">
         @if ($product->image1)
-      <img src="{{ asset('storage/' . $product->image1) }}" alt="Ảnh sản phẩm"
+      <img src="{{ asset($product->image1) }}" alt="Ảnh sản phẩm"
         class="w-10 h-10 rounded object-cover">
       @else
       <span class="text-gray-400 italic">No image</span>
