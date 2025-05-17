@@ -1,6 +1,16 @@
 @extends('dashboard.app')
 
 @section('content')
+
+
+
+@if ($errors->has('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ $errors->first('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 <div class="container py-4">
     <h1 class="text-2xl font-semibold mb-4">User Management</h1>
 
@@ -16,9 +26,10 @@
                 <input type="text" name="keyword" class="form-control" placeholder="Tìm tên hoặc email" value="{{ request('keyword') }}">
             </div>
             <div class="col">
-                <select name="sort" class="form-select">
-                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>ID tăng dần</option>
-                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>ID giảm dần</option>
+                <select name="role" class="form-select">
+                    <option value="">Tất cả vai trò</option>
+                    <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="customer" {{ request('role') == 'customer' ? 'selected' : '' }}>Customer</option>
                 </select>
             </div>
 
@@ -60,13 +71,15 @@
                         </td>
                         <td class="text-end">
                         <a href="{{ route('user.edit', $user->hash_id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <form action="{{ route('user.destroy', $user->hash_id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
-                                    Delete
-                                </button>
-                            </form>
+                        <form action="{{ route('user.destroy', $user->hash_id) }}" method="POST" class="d-inline delete-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Delete
+                            </button>
+                        </form>
+
+
                         </td>
                     </tr>
                 @empty
@@ -74,12 +87,28 @@
                         <td colspan="7" class="text-center text-muted">Không có người dùng nào.</td>
                     </tr>
                 @endforelse
+                
+
             </tbody>
         </table>
     </div>
-
+    @stack('scripts')
     <div class="mt-3">
         {{ $users->links('pagination::bootstrap-5') }}
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            if (!confirm('Bạn có chắc muốn xoá người dùng này không?')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+@endpush
+
+

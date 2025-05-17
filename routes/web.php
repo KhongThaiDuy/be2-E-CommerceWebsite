@@ -44,7 +44,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users', [UserController::class, 'store'])->name('user.store');
     Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('user.update');
-    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::delete('/admin/users/{hashId}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::get('/admin/users/autocomplete', [UserController::class, 'autocomplete'])->name('user.autocomplete');
+
 });
 
 
@@ -90,3 +92,9 @@ Route::get('/users/suggestions', [UserController::class, 'suggestions'])->name('
 
 
 
+Route::middleware('auth')->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+});
