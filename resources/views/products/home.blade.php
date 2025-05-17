@@ -20,7 +20,7 @@
             <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition duration-300 flex flex-col">
                 <a href="#" class="block overflow-hidden rounded-t-lg">
                     <img
-                        src="{{ $product->image1 ? asset('storage/' . $product->image1) : 'https://via.placeholder.com/300x300?text=No+Image' }}"
+                        src="{{ asset($product->image1) }}"
                         alt="{{ $product->product_name }}"
                         class="w-full h-48 object-cover transform hover:scale-105 transition duration-300"
                     />

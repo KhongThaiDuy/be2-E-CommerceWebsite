@@ -18,7 +18,7 @@ class BlogSeeder extends Seeder
             Blog::create([
                 'title' => 'Lợi ích của công nghệ',
                 'content' => 'Công nghệ ngày càng phát triển, mang lại nhiều lợi ích cho cuộc sống...',
-                'image' => 'https://via.placeholder.com/640x480.png/008811?text=Technology',
+                'image' => 'assets/images/blog-1.jpg',
                 'user_id' => $user->id,  // Gán đúng user_id
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -27,7 +27,7 @@ class BlogSeeder extends Seeder
             Blog::create([
                 'title' => 'Cách chọn sofa phù hợp',
                 'content' => 'Khi chọn sofa, cần lưu ý đến chất liệu, màu sắc, và kiểu dáng...',
-                'image' => 'https://via.placeholder.com/640x480.png/004455?text=Furniture',
+                'image' => 'assets/images/blog-1.jpg',
                 'user_id' => $user->id,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -36,7 +36,7 @@ class BlogSeeder extends Seeder
             Blog::create([
                 'title' => 'Tầm quan trọng của thời trang',
                 'content' => 'Thời trang không chỉ giúp chúng ta tự tin mà còn phản ánh cá tính...',
-                'image' => 'https://via.placeholder.com/640x480.png/0088ff?text=Fashion',
+                'image' => 'assets/images/blog-1.jpg',
                 'user_id' => $user->id,
                 'created_at' => now(),
                 'updated_at' => now(),

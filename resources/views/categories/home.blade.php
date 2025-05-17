@@ -13,7 +13,7 @@
     @foreach ($category->products as $product)
       <div class="border p-2 rounded">
         @if ($product->image1)
-          <img src="{{ asset('storage/' . $product->image1) }}" alt="{{ $product->product_name }}" class="w-full mb-2">
+          <img src="{{ asset($product->image1) }}" alt="{{ $product->product_name }}" class="w-full mb-2">
         @endif
 
         <h3 class="font-semibold">{{ $product->product_name }}</h3>
