@@ -37,7 +37,11 @@ class ProductController extends Controller
             }
             
         })
-        ->get();
+        ->paginate(10)
+        ->appends([
+            'search' => $search,
+            'sort' => $sort,
+        ]);
 
     return view('admin.product.index', compact('products', 'search', 'sort'));
 }
