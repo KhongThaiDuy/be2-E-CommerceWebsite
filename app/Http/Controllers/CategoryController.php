@@ -14,7 +14,7 @@ class CategoryController extends Controller
         $categories = Category::when($search, function ($query, $search) {
             $query->where('category_name', 'like', "%{$search}%")
                 ->orWhere('category_id', 'like', "%{$search}%");
-        })->paginate(10); // Phân trang 10 mục mỗi trang
+        })->paginate(3); // Phân trang 10 mục mỗi trang
 
         // Giữ tham số search khi phân trang
         $categories->appends(['search' => $search]);
