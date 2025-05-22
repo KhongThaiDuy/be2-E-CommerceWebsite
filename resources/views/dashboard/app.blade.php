@@ -84,7 +84,7 @@
           </button>
           <form method="POST" action="{{ route('dangxuat') }}">
             @csrf
-            <button type="submit" class="text-red-500 font-semibold hover:underline flex items-center gap-2">
+            <button type="submit" class="flex items-center gap-3 p-2 rounded hover:bg-gray-200">
               <i class="fa-solid fa-right-from-bracket"></i> Logout
             </button>
           </form>
@@ -113,6 +113,7 @@
       sidebar?.classList.toggle('hidden');
     });
   </script>
+  @stack('scripts')
 </body>
 
 </html>

@@ -37,7 +37,7 @@
 
   .dropdown-btn {
       
-      color: white;
+      color: black;
       padding: 10px 16px;
       border: none;
       cursor: pointer;
@@ -82,97 +82,100 @@
   -->
 
   <header class="header" data-header>
-    <div class="container">
+  <div class="container" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
 
-        <div class="overlay" data-overlay></div>
+    <div class="overlay" data-overlay></div>
 
-        <div class="header-search">
-            <input type="search" name="search" placeholder="Search Product..." class="input-field">
+    <!-- Thanh tìm kiếm -->
+    <div class="header-search" style="flex: 1; max-width: 400px; position: relative;">
+      <input type="search" name="search" placeholder="Search Product..." class="input-field" style="width: 100%; padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 4px;">
+      <button class="search-btn" aria-label="Search" style="position: absolute; top: 50%; right: 8px; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+        <ion-icon name="search-outline"></ion-icon>
+      </button>
+    </div>
 
-            <button class="search-btn" aria-label="Search">
-                <ion-icon name="search-outline"></ion-icon>
-            </button>
-        </div>
+    <!-- Logo -->
+    <a href="#" class="logo" style="flex-shrink: 0;">
+      <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
+    </a>
 
-        <a href="#" class="logo">
-            <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
-        </a>
+    <!-- Cart button -->
+    <button class="header-action-btn" style="position: relative; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
+      <ion-icon name="cart-outline" aria-hidden="true" style="font-size: 1.5rem;"></ion-icon>
+      <p class="header-action-label" style="font-size: 0.85rem;">Cart</p>
+      <div class="btn-badge green" aria-hidden="true" style="position: absolute; top: 0; right: 0; background-color: green; color: white; border-radius: 50%; padding: 0 6px; font-size: 0.7rem;">3</div>
+    </button>
 
-        
-        @auth
-    <!-- Hiển thị tên người dùng khi đã đăng nhập -->
-    <div class="header-action-btn">
+    <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
+    @auth
+      <div class="header-action-btn" style="display: flex; align-items: center; font-size: 0.9rem; padding-left: 1rem;">
         <p class="header-action-label">Hello {{ Auth::user()->full_name }}</p>
-    </div>
+      </div>
+    @endauth
 
-    <form method="POST" action="{{ route('dangxuat') }}" style="display: inline;">
-</form>
-@endauth
+    <!-- Navbar -->
+    <nav class="navbar" data-navbar style="margin-left: 1rem;">
+      <div class="navbar-top" style="margin-bottom: 1rem;">
+        <a href="#" class="logo">
+          <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
+        </a>
+      </div>
 
+      <ul class="navbar-list" style="list-style: none; padding: 0; margin: 0; display: flex; gap: 1rem;">
 
+        <li><a href="#home" class="navbar-link">Home</a></li>
+        <li><a href="{{ route('products.home') }}" class="navbar-link">Shop</a></li>
 
-
-
-
-
-        <button class="nav-open-btn" data-nav-open-btn aria-label="Open Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <nav class="navbar" data-navbar>
-            <div class="navbar-top">
-                <a href="#" class="logo">
-                    <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
+        <li class="dropdown-container" style="position: relative;">
+          <button class="dropdown-btn" onclick="toggleDropdown()" style="background: none; border: none; cursor: pointer;">Categories</button>
+          <ul class="dropdown-list" id="dropdownList" style="display: none; position: absolute; top: 100%; left: 0; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.15); padding: 0.5rem 1rem; list-style: none; margin: 0; z-index: 10;">
+            @php
+              $categories = \App\Models\Category::all();
+            @endphp
+            @foreach ($categories as $category)
+              <li style="margin-bottom: 0.3rem;">
+                <a href="{{ route('categories.products', $category->category_id) }}" style="text-decoration: none; color: #333;">
+                  {{ $category->category_name }}
                 </a>
-                <button class="nav-close-btn" data-nav-close-btn aria-label="Close Menu">
-                    <ion-icon name="close-outline"></ion-icon>
-                </button>
-            </div>
+              </li>
+            @endforeach
+          </ul>
+        </li>
 
-            <ul class="navbar-list">
-                <li><a href="#home" class="navbar-link">Home</a></li>
-                <li><a href="#" class="navbar-link">Shop</a></li>
-               <div class="dropdown-container">
-                  <button class="dropdown-btn" onclick="toggleDropdown()">Categories⯆</button>
-                  <ul class="dropdown-list" id="dropdownList">
-                      @php
-                          $categories = \App\Models\Category::all();
-                      @endphp
-                      @foreach ($categories as $category)
-                          <li>
-                              <a href="{{ route('categories.products', $category->category_id) }}">
-                                  {{ $category->category_name }}
-                              </a>
-                          </li>
-                      @endforeach
-                  </ul>
-              </div>
+        <li><a href="{{ route('blogs.home') }}" class="navbar-link">Blog</a></li>
+        <li><a href="#" class="navbar-link">Contact</a></li>
 
+        @auth
+          @if (Auth::user()->role === 'admin')
+            <li><a href="{{ route('admin-dashboard') }}" class="navbar-link text-red-500 font-bold">Dashboard</a></li>
+          @endif
+          <li>
+            <form method="POST" action="{{ route('dangxuat') }}">
+              @csrf
+              <button type="submit" class="navbar-link text-red-500 font-bold" style="background: none; border: none; cursor: pointer;">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+              </button>
+            </form>
+          </li>
+        @endauth
 
+      </ul>
+    </nav>
 
-                <li><a href="{{ route('blogs.home') }}" class="navbar-link">Blog</a></li>
-                <li><a href="#" class="navbar-link">Contact</a></li>
-
-                @auth
-                    @if (Auth::user()->role === 'admin')
-                        <li><a href="{{ route('admin-dashboard') }}" class="navbar-link text-red-500 font-bold">Dashboard</a></li>
-                    @endif
-                @endauth
-                <li>
-                    <form method="POST" action="{{ route('dangxuat') }}">
-                        @csrf
-                        <button type="submit" class="navbar-link text-red-500 font-bold">
-                        <i class="fa-solid fa-right-from-bracket"></i> Logout
-                        </button>
-                    </form>
-                </li>
-
-            </ul>
-        </nav>
-    </div>
+  </div>
 </header>
+
+<script>
+  function toggleDropdown() {
+    const dropdown = document.getElementById('dropdownList');
+    if (dropdown.style.display === 'block') {
+      dropdown.style.display = 'none';
+    } else {
+      dropdown.style.display = 'block';
+    }
+  }
+</script>
+
 
 
 
