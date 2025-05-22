@@ -20,7 +20,7 @@
             <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition duration-300 flex flex-col">
                 <a href="#" class="block overflow-hidden rounded-t-lg">
                     <img
-                        src="{{ $product->image1 ? asset('storage/' . $product->image1) : 'https://via.placeholder.com/300x300?text=No+Image' }}"
+                        src="{{ asset($product->image1) }}"
                         alt="{{ $product->product_name }}"
                         class="w-full h-48 object-cover transform hover:scale-105 transition duration-300"
                     />
@@ -32,6 +32,12 @@
                     <p class="text-red-600 font-bold text-xl mb-2">{{ number_format($product->price, 0, ',', '.') }}₫</p>
                     <p class="text-gray-500 text-sm mb-2">Số lượng còn lại: {{ $product->quantity }}</p>
 
+                    <form action="{{ route('cart.add', $product->product_id) }}" method="POST" class="mt-4">
+                        @csrf
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            Thêm vào giỏ hàng
+                        </button>
+                    </form>
                     <!-- Rating: hiển thị theo hàng ngang -->
                     <div class="flex items-center space-x-1 mt-auto">
                         @for ($i = 1; $i <= 5; $i++)

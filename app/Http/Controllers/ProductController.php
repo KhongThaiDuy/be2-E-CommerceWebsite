@@ -60,9 +60,9 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'quantity' => 'required|integer',
             'category_id' => 'required|exists:categories,category_id',
-            'image1' => 'nullable|image',
-            'image2' => 'nullable|image',
-            'image3' => 'nullable|image',
+            'image1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'rating' => 'nullable|integer|min:1|max:5',
         ]);
 
@@ -72,16 +72,56 @@ class ProductController extends Controller
             'price' => $request->price,
             'quantity' => $request->quantity,
             'category_id' => $request->category_id,
-            'image1' => $request->file('image1') ? $request->file('image1')->store('images') : null,
-            'image2' => $request->file('image2') ? $request->file('image2')->store('images') : null,
-            'image3' => $request->file('image3') ? $request->file('image3')->store('images') : null,
             'rating' => $request->rating,
         ]);
-        
+
+        // Upload image1
+        if ($request->hasFile('image1')) {
+            $file = $request->file('image1');
+            $filename = time() . '_1_' . $file->getClientOriginalName();
+            $destination = public_path('assets/images');
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+            $product->image1 = 'assets/images/' . $filename;
+        }
+
+        // Upload image2
+        if ($request->hasFile('image2')) {
+            $file = $request->file('image2');
+            $filename = time() . '_2_' . $file->getClientOriginalName();
+            $destination = public_path('assets/images');
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+            $product->image2 = 'assets/images/' . $filename;
+        }
+
+        // Upload image3
+        if ($request->hasFile('image3')) {
+            $file = $request->file('image3');
+            $filename = time() . '_3_' . $file->getClientOriginalName();
+            $destination = public_path('assets/images');
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+            $product->image3 = 'assets/images/' . $filename;
+        }
+
         $product->save();
 
         return redirect()->route('product.index')->with('success', 'Sản phẩm đã được thêm thành công.');
     }
+
 
     // Hiển thị form sửa sản phẩm
     public function edit(Product $product)
@@ -90,29 +130,56 @@ class ProductController extends Controller
         return view('admin.product.edit', compact('product', 'categories'));
     }
 
-    // Cập nhật sản phẩm
-    public function update(Request $request, Blog $blog)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-        ]);
-    
-        $blog->title = $request->title;
-        $blog->content = $request->content;
-    
-        if ($request->hasFile('image')) {
-            // Xoá ảnh cũ nếu có
-            if ($blog->image) {
-                \Storage::delete('public/' . $blog->image);
-            }
-            $blog->image = $request->file('image')->store('images', 'public');
+    public function update(Request $request, Product $product)
+{
+    $request->validate([
+        'product_name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'required|numeric',
+        'quantity' => 'required|integer',
+        'category_id' => 'required|exists:categories,category_id',
+        'image1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'image2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'image3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'rating' => 'nullable|integer|min:1|max:5',
+    ]);
+
+    $product->product_name = $request->product_name;
+    $product->description = $request->description;
+    $product->price = $request->price;
+    $product->quantity = $request->quantity;
+    $product->category_id = $request->category_id;
+    $product->rating = $request->rating;
+
+    // Xử lý image1
+    if ($request->hasFile('image1')) {
+        if ($product->image1) {
+            \Storage::disk('public')->delete($product->image1);
         }
-    
-        $blog->save();
-        return redirect()->route('blogs.index')->with('success', 'Cập nhật bài viết thành công!');
+        $product->image1 = $request->file('image1')->store('images', 'public');
     }
+
+    // Xử lý image2
+    if ($request->hasFile('image2')) {
+        if ($product->image2) {
+            \Storage::disk('public')->delete($product->image2);
+        }
+        $product->image2 = $request->file('image2')->store('images', 'public');
+    }
+
+    // Xử lý image3
+    if ($request->hasFile('image3')) {
+        if ($product->image3) {
+            \Storage::disk('public')->delete($product->image3);
+        }
+        $product->image3 = $request->file('image3')->store('images', 'public');
+    }
+
+    $product->save();
+
+    return redirect()->route('product.index')->with('success', 'Cập nhật sản phẩm thành công!');
+}
+
     
   public function suggestions(Request $request)
 {

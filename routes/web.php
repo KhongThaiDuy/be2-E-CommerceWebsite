@@ -7,7 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ProductController;
-
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CartController;
 
 // Trang chủ
 Route::get('/', function () {
@@ -44,9 +45,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users', [UserController::class, 'store'])->name('user.store');
     Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('user.update');
-    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::delete('/admin/users/{hashId}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::get('/admin/users/autocomplete', [UserController::class, 'autocomplete'])->name('user.autocomplete');
 });
 
+// routes/web.php hoặc routes/api.php
+Route::get('/user/suggestions', [UserController::class, 'suggestions'])->name('user.suggestions');
 
 
 // danh mục
@@ -90,3 +94,16 @@ Route::get('/users/suggestions', [UserController::class, 'suggestions'])->name('
 
 
 
+Route::middleware('auth')->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+});
+
+
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::delete('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');

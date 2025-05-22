@@ -4,9 +4,14 @@
     <div class="container mx-auto">
         <h1 class="text-2xl font-semibold mb-4">Edit User: {{ $user->full_name }}</h1>
         <form action="{{ route('user.update', ['user' => $user->hash_id]) }}" method="POST">
-        
+        <input type="hidden" name="updated_at" value="{{ optional($user->updated_at)->toISOString() }}">
         @csrf
             @method('PUT')
+            @if ($errors->has('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative my-4">
+                    <strong>Lỗi:</strong> {{ $errors->first('error') }}
+                </div>
+            @endif
             <div>
                 <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
                 <input type="text" id="username" name="username" value="{{ old('username', $user->username) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">

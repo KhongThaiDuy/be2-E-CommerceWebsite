@@ -9,23 +9,12 @@ class CategorySeeder extends Seeder
 {
     public function run()
     {
-        // Tạo một số danh mục mẫu
-        Category::create([
-            'category_name' => 'Electronics',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        Category::create([
-            'category_name' => 'Furniture',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        Category::create([
-            'category_name' => 'Clothing',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        for ($i = 1; $i <= 10; $i++) {
+            Category::create([
+                'category_name' => "Category $i",
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

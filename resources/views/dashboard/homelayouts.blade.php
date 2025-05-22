@@ -43,11 +43,11 @@
 
   .dropdown-btn {
       
-      color: white;
+      color: black;
       padding: 10px 16px;
       border: none;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: ;
       border-radius: 5px;
   }
 
@@ -88,55 +88,58 @@
   -->
 
   <header class="header" data-header>
-    <div class="container">
+  <div class="container" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
 
-        <div class="overlay" data-overlay></div>
+    <div class="overlay" data-overlay></div>
 
-        <div class="header-search">
-            <input type="search" name="search" placeholder="Search Product..." class="input-field">
-
-            <button class="search-btn" aria-label="Search">
-                <ion-icon name="search-outline"></ion-icon>
-            </button>
-        </div>
-
-        <a href="#" class="logo">
-            <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
-        </a>
-
-        
-        @auth
-    <!-- Hiển thị tên người dùng khi đã đăng nhập -->
-    <div class="header-action-btn">
-        <p class="header-action-label">Hello {{ Auth::user()->full_name }}</p>
+    <!-- Thanh tìm kiếm -->
+    <div class="header-search" style="flex: 1; max-width: 400px; position: relative;">
+      <input type="search" name="search" placeholder="Search Product..." class="input-field" style="width: 100%; padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 4px;">
+      <button class="search-btn" aria-label="Search" style="position: absolute; top: 50%; right: 8px; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+        <ion-icon name="search-outline"></ion-icon>
+      </button>
     </div>
 
-    <form method="POST" action="{{ route('dangxuat') }}" style="display: inline;">
-</form>
-@endauth
+    <!-- Logo -->
+    <a href="#" class="logo" style="flex-shrink: 0;">
+      <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
+    </a>
 
-        <button class="nav-open-btn" data-nav-open-btn aria-label="Open Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+    <!-- Cart button -->
+    <a href="{{ route('cart.index') }}" class="header-action-btn" 
+      style="position: relative; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: inherit;">
+      <ion-icon name="cart-outline" aria-hidden="true" style="font-size: 1.5rem;"></ion-icon>
+      <p class="header-action-label" style="font-size: 0.85rem;">Cart</p>
+      <div class="btn-badge green" aria-hidden="true" 
+          style="position: absolute; top: 0; right: 0; background-color: green; color: white; border-radius: 50%; padding: 0 6px; font-size: 0.7rem;">
+          {{ $totalQuantity > 0 ? $totalQuantity : '' }}
+      </div>
+    </a>
 
-        <nav class="navbar" data-navbar>
-            <div class="navbar-top">
-                <a href="#" class="logo">
-                    <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
-                </a>
-                <button class="nav-close-btn" data-nav-close-btn aria-label="Close Menu">
-                    <ion-icon name="close-outline"></ion-icon>
-                </button>
-            </div>
 
+
+
+    <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
+    @auth
+      <div class="header-action-btn" style="display: flex; align-items: center; font-size: 0.9rem; padding-left: 1rem;">
+        <p class="header-action-label">Hello {{ Auth::user()->full_name }}</p>
+      </div>
+    @endauth
+
+    <!-- Navbar -->
+    <nav class="navbar" data-navbar style="margin-left: 1rem;">
+      <div class="navbar-top" style="margin-bottom: 1rem;">
+        <a href="#" class="logo">
+          <img src="{{ asset('assets/images/logo.svg') }}" alt="Casmart logo" width="130" height="31">
+        </a>
+      </div>
+      
             <ul class="navbar-list">
-                <li><a href="{{ route('dashboard') }}" class="navbar-link">Home</a></li>
-                <li><a href="{{ route('products.home') }}" class="navbar-link">Shop</a></li>
-                <li><a href="#" class="navbar-link">About</a></li>
+                <li><a href="{{ route('dashboard') }}" class="navbar-link text-500 font-bold">Home</a></li>
+                <li><a href="{{ route('products.home') }}" class="-navbar-link text-500 font-bold">Shop</a></li>
+         
                 <div class="dropdown-container">
-                  <button class="dropdown-btn" onclick="toggleDropdown()">Categories⯆</button>
+                  <button class="dropdown-btn navbar-link text-500 font-bold" onclick="toggleDropdown()">Categories</button>
                   <ul class="dropdown-list" id="dropdownList">
                       @php
                           $categories = \App\Models\Category::all();
@@ -151,18 +154,18 @@
                   </ul>
               </div>
 
-                <li><a href="{{ route('blogs.home') }}" class="navbar-link">Blog</a></li>
-                <li><a href="#" class="navbar-link">Contact</a></li>
+                <li><a href="{{ route('blogs.home') }}" class="navbar-link text-500 font-bold">Blog</a></li>
+                <li><a href="#" class="navbar-link text-500 font-bold">Contact</a></li>
 
                 @auth
                     @if (Auth::user()->role === 'admin')
-                        <li><a href="{{ route('admin-dashboard') }}" class="navbar-link text-red-500 font-bold">Dashboard</a></li>
+                        <li><a href="{{ route('admin-dashboard') }}" class="navbar-link text-500 font-bold">Dashboard</a></li>
                     @endif
                 @endauth
                 <li>
                     <form method="POST" action="{{ route('dangxuat') }}">
                         @csrf
-                        <button type="submit" class="navbar-link text-red-500 font-bold">
+                        <button type="submit" class="navbar-link text-500 font-bold">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                         </button>
                     </form>
