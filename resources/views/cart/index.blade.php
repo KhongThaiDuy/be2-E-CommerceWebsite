@@ -1,4 +1,4 @@
-@extends('dashboard.app')
+@extends('dashboard.homelayouts')
 
 @section('content')
 <div class="container py-4">
@@ -51,7 +51,7 @@
 
         <form action="{{ route('cart.checkout') }}" method="POST">
             @csrf
-            <button class="btn btn-success">Thanh toán</button>
+            <button class="btn btn-success">Đặt Hàng</button>
         </form>
     @endif
 </div>

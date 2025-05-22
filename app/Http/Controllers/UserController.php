@@ -199,4 +199,29 @@ class UserController extends Controller
         return redirect()->route('user.index')->with('success', 'Xoá người dùng thành công.');
     }
     
+    public function suggestions(Request $request)
+    {
+        $keyword = $request->get('keyword', '');
+
+        if (strlen($keyword) < 2) {
+            return response()->json([]);
+        }
+
+        $results = User::where(function($q) use ($keyword) {
+            $q->where('username', 'like', "%{$keyword}%")
+            ->orWhere('email', 'like', "%{$keyword}%");
+        })->limit(10)->get(['id', 'username', 'email']);
+
+        $suggestions = $results->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'value' => $user->username,
+                'label' => $user->username . ' (' . $user->email . ')',
+            ];
+        });
+
+        return response()->json($suggestions);
+    }
+
+
 }

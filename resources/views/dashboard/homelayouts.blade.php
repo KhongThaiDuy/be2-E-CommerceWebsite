@@ -106,11 +106,18 @@
     </a>
 
     <!-- Cart button -->
-    <button class="header-action-btn" style="position: relative; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
+    <a href="{{ route('cart.index') }}" class="header-action-btn" 
+      style="position: relative; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: inherit;">
       <ion-icon name="cart-outline" aria-hidden="true" style="font-size: 1.5rem;"></ion-icon>
       <p class="header-action-label" style="font-size: 0.85rem;">Cart</p>
-      <div class="btn-badge green" aria-hidden="true" style="position: absolute; top: 0; right: 0; background-color: green; color: white; border-radius: 50%; padding: 0 6px; font-size: 0.7rem;">3</div>
-    </button>
+      <div class="btn-badge green" aria-hidden="true" 
+          style="position: absolute; top: 0; right: 0; background-color: green; color: white; border-radius: 50%; padding: 0 6px; font-size: 0.7rem;">
+          {{ $totalQuantity > 0 ? $totalQuantity : '' }}
+      </div>
+    </a>
+
+
+
 
     <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
     @auth
@@ -128,11 +135,11 @@
       </div>
       
             <ul class="navbar-list">
-                <li><a href="{{ route('dashboard') }}" class="navbar-link">Home</a></li>
-                <li><a href="{{ route('products.home') }}" class="navbar-link">Shop</a></li>
+                <li><a href="{{ route('dashboard') }}" class="navbar-link text-500 font-bold">Home</a></li>
+                <li><a href="{{ route('products.home') }}" class="-navbar-link text-500 font-bold">Shop</a></li>
          
                 <div class="dropdown-container">
-                  <button class="dropdown-btn" onclick="toggleDropdown()">Categories</button>
+                  <button class="dropdown-btn navbar-link text-500 font-bold" onclick="toggleDropdown()">Categories</button>
                   <ul class="dropdown-list" id="dropdownList">
                       @php
                           $categories = \App\Models\Category::all();
@@ -147,18 +154,18 @@
                   </ul>
               </div>
 
-                <li><a href="{{ route('blogs.home') }}" class="navbar-link">Blog</a></li>
-                <li><a href="#" class="navbar-link">Contact</a></li>
+                <li><a href="{{ route('blogs.home') }}" class="navbar-link text-500 font-bold">Blog</a></li>
+                <li><a href="#" class="navbar-link text-500 font-bold">Contact</a></li>
 
                 @auth
                     @if (Auth::user()->role === 'admin')
-                        <li><a href="{{ route('admin-dashboard') }}" class="navbar-link text-red-500 font-bold">Dashboard</a></li>
+                        <li><a href="{{ route('admin-dashboard') }}" class="navbar-link text-500 font-bold">Dashboard</a></li>
                     @endif
                 @endauth
                 <li>
                     <form method="POST" action="{{ route('dangxuat') }}">
                         @csrf
-                        <button type="submit" class="navbar-link text-red-500 font-bold">
+                        <button type="submit" class="navbar-link text-500 font-bold">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                         </button>
                     </form>
