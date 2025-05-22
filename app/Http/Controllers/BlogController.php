@@ -16,7 +16,7 @@ class BlogController extends Controller
             $query->where('title', 'like', '%' . $request->search . '%');
         }
     
-        $blogs = $query->latest()->paginate(6); // Áp dụng phân trang ở đây
+        $blogs = $query->orderBy('post_id', 'asc')->paginate(6); // Áp dụng phân trang ở đây
     
         return view('admin.blogs.index', compact('blogs'));
     }
