@@ -3,23 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
     public function index()
     {
-        $cart = session()->get('cart', []);
-        return view('cart.index', compact('cart'));
+        $cart = session('cart', []);
+        return view('cart.index', compact('cart')); // Không cần truyền $totalQuantity nữa
     }
+
 
     public function add(Request $request, Product $product)
     {
         $cart = session()->get('cart', []);
 
-        $cart[$product->id] = [
-            'name' => $product->name,
+        $cart[$product->product_id] = [
+            'name' => $product->product_name,
             'price' => $product->price,
-            'quantity' => ($cart[$product->id]['quantity'] ?? 0) + 1
+            'quantity' => ($cart[$product->product_id]['quantity'] ?? 0) + 1,
+            'image' => $product->image1,
         ];
 
         session(['cart' => $cart]);
@@ -30,20 +36,24 @@ class CartController extends Controller
     public function remove(Product $product)
     {
         $cart = session()->get('cart', []);
-        unset($cart[$product->id]);
+        unset($cart[$product->product_id]);
         session(['cart' => $cart]);
 
-        return back()->with('success', 'Đã xoá sản phẩm!');
+        return back()->with('success', 'Đã xoá sản phẩm khỏi giỏ hàng!');
     }
 
     public function checkout()
     {
         $cart = session()->get('cart', []);
-        if (empty($cart)) return back()->withErrors(['error' => 'Giỏ hàng trống']);
+
+        if (empty($cart)) {
+            return back()->withErrors(['error' => 'Giỏ hàng đang trống']);
+        }
 
         DB::beginTransaction();
         try {
             $total = array_reduce($cart, fn($sum, $item) => $sum + $item['price'] * $item['quantity'], 0);
+
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'total_amount' => $total,
@@ -62,10 +72,10 @@ class CartController extends Controller
             DB::commit();
             session()->forget('cart');
 
-            return redirect()->route('cart.index')->with('success', 'Thanh toán thành công!');
+            return redirect()->route('cart.index')->with('success', 'Đặt hàng thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Lỗi khi thanh toán: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Lỗi khi đặt hàng: ' . $e->getMessage()]);
         }
     }
 }

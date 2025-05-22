@@ -2,8 +2,6 @@
 
 @section('content')
 
-
-
 @if ($errors->has('error'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ $errors->first('error') }}
@@ -22,9 +20,10 @@
 
     <div class="mb-3 d-flex justify-content-between align-items-center">
         <form action="{{ route('user.index') }}" method="GET" class="row g-2">
-            <div class="col">
-                <input type="text" name="keyword" class="form-control" placeholder="Tìm tên hoặc email" value="{{ request('keyword') }}">
-            </div>
+        <div class="col position-relative">
+            <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Tìm tên hoặc email" value="{{ request('keyword') }}" autocomplete="off">
+            <ul id="suggestions-list" class="list-group position-absolute" style="z-index: 999; width: 100%; max-height: 200px; overflow-y: auto;"></ul>
+        </div>
             <div class="col">
                 <select name="role" class="form-select">
                     <option value="">Tất cả vai trò</option>
@@ -92,7 +91,7 @@
             </tbody>
         </table>
     </div>
-    @stack('scripts')
+ 
     <div class="mt-3">
         {{ $users->links('pagination::bootstrap-5') }}
     </div>
@@ -109,6 +108,58 @@
         });
     });
 </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#keyword').on('input', function() {
+        let query = $(this).val().trim();
+
+        if(query.length < 2) {
+            $('#suggestions-list').empty();
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('user.suggestions') }}",
+            method: 'GET',
+            data: { keyword: query },
+            success: function(data) {
+                let html = '';
+                if(data.length > 0) {
+                    data.forEach(item => {
+                        // Lưu luôn value dưới dạng data-value để dùng khi click
+                        html += `<li class="list-group-item suggestion-item" style="cursor:pointer;" data-value="${item.value}">${item.label}</li>`;
+                    });
+                } else {
+                    html = '<li class="list-group-item text-muted">Không tìm thấy kết quả</li>';
+                }
+                $('#suggestions-list').html(html);
+            },
+            error: function() {
+                $('#suggestions-list').empty();
+            }
+        });
+    });
+
+    // Khi click chọn gợi ý
+    $(document).on('click', '.suggestion-item', function() {
+    // Lấy value đã lưu trong data-value
+    let val = $(this).data('value');
+    $('#keyword').val(val);
+    $('#suggestions-list').empty();
+    });
+
+    // Click ngoài ẩn gợi ý
+    $(document).click(function(e) {
+        if(!$(e.target).closest('#keyword, #suggestions-list').length) {
+            $('#suggestions-list').empty();
+        }
+    });
+    
+});
+</script>
+
 @endpush
 
 
