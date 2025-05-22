@@ -17,11 +17,7 @@
       <div id="suggestions"
      class="absolute bg-white border border-gray-300 rounded mt-1 w-full md:w-64 hidden z-10 shadow-md">
 </div>
-    @if ($categories->hasPages())
-    <div class="mt-4">
-      {{ $categories->withQueryString()->links('pagination::bootstrap-5') }}
-    </div>
-  @endif
+    
 
       <button type="submit" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
       <i class="fa fa-search"></i>
