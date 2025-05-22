@@ -22,5 +22,6 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('totalQuantity', $totalQuantity);
         });
+        
     }
 }
