@@ -82,8 +82,8 @@ Route::delete('/admin/blogs/{blog}', [BlogController::class, 'destroy'])->name('
 Route::get('/admin/product', [ProductController::class, 'index'])->name('product.index'); // Hiển thị danh sách sản phẩm
 Route::get('/admin/product/create', [ProductController::class, 'create'])->name('product.create'); // Tạo sản phẩm mới
 Route::post('/admin/product', [ProductController::class, 'store'])->name('product.store'); // Lưu sản phẩm mới
-Route::get('/admin/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit'); // Chỉnh sửa sản phẩm
-Route::put('/admin/product/{product}', [ProductController::class, 'update'])->name('product.update'); // Cập nhật sản phẩm
+Route::get('/admin/product/{id}/edit', [ProductController::class, 'edit'])->name('product.edit'); // Chỉnh sửa sản phẩm
+Route::put('/admin/product/{id}', [ProductController::class, 'update'])->name('product.update'); // Cập nhật sản phẩm
 Route::delete('/admin/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy'); // Xóa sản phẩm
 Route::get('/products/home', [ProductController::class, 'home'])->name('products.home');
 
