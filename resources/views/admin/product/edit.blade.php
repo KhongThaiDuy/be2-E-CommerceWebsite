@@ -72,7 +72,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 @if ($product->image1)
-                    <img src="{{ asset($product->image1) }}" class="mt-2" width="100">
+                    <img src="{{ asset('storage/' . $product->image1) }}" alt="Ảnh 1" class="mt-2" width="100">
                 @endif
             </div>
 
@@ -83,7 +83,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 @if ($product->image2)
-                    <img src="{{ asset($product->image2) }}" class="mt-2" width="100">
+                    <img src="{{ asset('storage/' . $product->image2) }}" alt="Ảnh 2" class="mt-2" width="100">
                 @endif
             </div>
 
@@ -94,7 +94,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 @if ($product->image3)
-                    <img src="{{ asset($product->image3) }}" class="mt-2" width="100">
+                    <img src="{{ asset('storage/' . $product->image3) }}" alt="Ảnh 3" class="mt-2" width="100">
                 @endif
             </div>
 
