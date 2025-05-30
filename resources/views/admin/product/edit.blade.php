@@ -3,14 +3,19 @@
 @section('content')
     <div class="container">
         <h1 class="my-4">Chỉnh sửa sản phẩm</h1>
-
+        @if ($errors->has('general'))
+            <div class="alert alert-danger">
+                {{ $errors->first('general') }}
+            </div>
+        @endif
         <form action="{{ route('product.update', $product->product_id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
             <div class="form-group">
                 <label for="product_name">Tên sản phẩm</label>
-                <input type="text" class="form-control" id="product_name" name="product_name" value="{{ $product->product_name }}" required>
+                <input type="text" class="form-control" id="product_name" name="product_name"
+                    value="{{ $product->product_name }}" required>
             </div>
 
             <div class="form-group">
@@ -31,7 +36,8 @@
 
             <div class="form-group">
                 <label for="quantity">Số lượng</label>
-                <input type="number" class="form-control" id="quantity" name="quantity" value="{{ $product->quantity }}" required>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="{{ $product->quantity }}"
+                    required>
             </div>
 
             <div class="form-group">
@@ -54,10 +60,14 @@
 
             <div class="form-group">
                 <label for="rating">Đánh giá</label>
-                <input type="number" class="form-control" id="rating" name="rating" value="{{ $product->rating }}" min="1" max="5">
+                <input type="number" class="form-control" id="rating" name="rating" value="{{ $product->rating }}" min="1"
+                    max="5">
             </div>
 
             <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <input type="hidden" name="updated_at" value="{{ $product->updated_at }}">
         </form>
+
+
     </div>
 @endsection
