@@ -43,9 +43,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'index'])->name('user.index');
     Route::get('/admin/users/create', [UserController::class, 'create'])->name('user.create');
     Route::post('/admin/users', [UserController::class, 'store'])->name('user.store');
-    Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
-    Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('user.update');
-    Route::delete('/admin/users/{hashId}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::get('/admin/users/{token}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/admin/users/{token}', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/admin/users/{token}', [UserController::class, 'destroy'])->name('user.destroy');
     Route::get('/admin/users/autocomplete', [UserController::class, 'autocomplete'])->name('user.autocomplete');
 });
 
