@@ -112,7 +112,7 @@ class ProductController extends Controller
             'rating' => $request->rating,
         ]);
 
-        // Upload image1
+        // Trong store()
         if ($request->hasFile('image1')) {
             $file = $request->file('image1');
             $filename = time() . '_1_' . $file->getClientOriginalName();
@@ -126,7 +126,6 @@ class ProductController extends Controller
             $product->image1 = 'assets/images/' . $filename;
         }
 
-        // Upload image2
         if ($request->hasFile('image2')) {
             $file = $request->file('image2');
             $filename = time() . '_2_' . $file->getClientOriginalName();
@@ -140,7 +139,6 @@ class ProductController extends Controller
             $product->image2 = 'assets/images/' . $filename;
         }
 
-        // Upload image3
         if ($request->hasFile('image3')) {
             $file = $request->file('image3');
             $filename = time() . '_3_' . $file->getClientOriginalName();
@@ -153,6 +151,7 @@ class ProductController extends Controller
             $file->move($destination, $filename);
             $product->image3 = 'assets/images/' . $filename;
         }
+
 
         $product->save();
 
@@ -210,6 +209,15 @@ class ProductController extends Controller
                 'price.numeric' => 'Giá không hợp lệ và bắt buộc phải là số nguyên.',
                 'quantity.required' => 'Số lượng là trường bắt buộc.',
                 'quantity.integer' => 'Số lượng không hợp lệ và phải là số nguyên.',
+                'image1.image' => 'Ảnh 1 phải là file ảnh.',
+                'image1.mimes' => 'Ảnh 1 phải có định dạng jpeg, png, jpg, gif.',
+                'image1.max' => 'Ảnh 1 không được lớn hơn 2MB.',
+                'image2.image' => 'Ảnh 2 phải là file ảnh.',
+                'image2.mimes' => 'Ảnh 2 phải có định dạng jpeg, png, jpg, gif.',
+                'image2.max' => 'Ảnh 2 không được lớn hơn 2MB.',
+                'image3.image' => 'Ảnh 3 phải là file ảnh.',
+                'image3.mimes' => 'Ảnh 3 phải có định dạng jpeg, png, jpg, gif.',
+                'image3.max' => 'Ảnh 3 không được lớn hơn 2MB.',
                 'rating.required' => 'Đánh giá là trường bắt buộc.',
                 'rating.integer' => 'Đánh giá phải là số nguyên.',
                 'rating.min' => 'Đánh giá phải lớn hơn hoặc bằng 1.',
@@ -230,29 +238,58 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->rating = $request->rating;
 
-        // Xử lý image1
+        // Trong update()
         if ($request->hasFile('image1')) {
-            if ($product->image1) {
-                \Storage::disk('public')->delete($product->image1);
+            if ($product->image1 && file_exists(public_path($product->image1))) {
+                unlink(public_path($product->image1));
             }
-            $product->image1 = $request->file('image1')->store('images', 'public');
+
+            $file = $request->file('image1');
+            $filename = time() . '_1_' . $file->getClientOriginalName();
+            $destination = public_path('assets/images');
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+            $product->image1 = 'assets/images/' . $filename;
         }
 
-        // Xử lý image2
         if ($request->hasFile('image2')) {
-            if ($product->image2) {
-                \Storage::disk('public')->delete($product->image2);
+            if ($product->image2 && file_exists(public_path($product->image2))) {
+                unlink(public_path($product->image2));
             }
-            $product->image2 = $request->file('image2')->store('images', 'public');
+
+            $file = $request->file('image2');
+            $filename = time() . '_2_' . $file->getClientOriginalName();
+            $destination = public_path('assets/images');
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+            $product->image2 = 'assets/images/' . $filename;
         }
 
-        // Xử lý image3
         if ($request->hasFile('image3')) {
-            if ($product->image3) {
-                \Storage::disk('public')->delete($product->image3);
+            if ($product->image3 && file_exists(public_path($product->image3))) {
+                unlink(public_path($product->image3));
             }
-            $product->image3 = $request->file('image3')->store('images', 'public');
+
+            $file = $request->file('image3');
+            $filename = time() . '_3_' . $file->getClientOriginalName();
+            $destination = public_path('assets/images');
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $filename);
+            $product->image3 = 'assets/images/' . $filename;
         }
+
 
         $product->save();
 
