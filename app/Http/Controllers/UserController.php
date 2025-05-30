@@ -6,15 +6,23 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 
 class UserController extends Controller
 {
+    private function convertFullWidthNumberToHalfWidth(string $str): string
+    {
+        $fullWidthNums = ['０','１','２','３','４','５','６','７','８','９'];
+        $halfWidthNums = ['0','1','2','3','4','5','6','7','8','9'];
+
+        return str_replace($fullWidthNums, $halfWidthNums, $str);
+    }
     public function index(Request $request)
     {
         $query = User::query();
 
-        // Lọc theo keyword (full_name hoặc email)
         if ($request->filled('keyword')) {
             $keyword = $request->keyword;
             $query->where(function ($q) use ($keyword) {
@@ -23,17 +31,38 @@ class UserController extends Controller
             });
         }
 
-        // Lọc theo role
         if ($request->filled('role')) {
             $query->where('role', $request->role);
         }
 
-        // Sắp xếp theo id
         $sortOrder = $request->get('sort', 'asc');
-        $users = $query->orderBy('id', $sortOrder)->paginate(10)->withQueryString();
+
+        $perPage = 10;
+        $page = $request->get('page', 1);
+
+        // Chuyển số full-width sang half-width nếu có (nếu cần)
+        $page = str_replace(['０','１','２','３','４','５','６','７','８','９'], ['0','1','2','3','4','5','6','7','8','9'], $page);
+
+        // Kiểm tra page có phải số nguyên dương không
+        if (!ctype_digit($page) || intval($page) < 1) {
+            return redirect()->route('user.index')
+                ->withErrors(['error' => 'Tham số trang (page) không hợp lệ.']);
+        }
+
+        $totalRecords = $query->count();
+        $maxPage = (int) ceil($totalRecords / $perPage);
+
+        // Nếu page vượt quá tổng số trang
+        if ($maxPage > 0 && intval($page) > $maxPage) {
+            return redirect()->route('user.index')
+                ->withErrors(['error' => "Trang bạn yêu cầu không tồn tại. Tổng số trang tối đa là $maxPage."]);
+        }
+
+        $users = $query->orderBy('id', $sortOrder)->paginate($perPage);
 
         return view('admin.users.index', compact('users'));
     }
+
 
 
     public function create()
@@ -47,35 +76,49 @@ class UserController extends Controller
             'username' => 'required|unique:users,username',
             'password' => 'required|min:6|confirmed',
             'email' => 'nullable|email|unique:users,email',
-            'full_name' => 'required|string|max:255',
-            'address' => 'nullable|string|max:255',
+            'full_name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    $trimmed = preg_replace('/[\s\x{3000}]+/u', '', $value);
+                    if ($trimmed === '') {
+                        $fail("Trường {$attribute} không được phép chỉ chứa khoảng trắng.");
+                    }
+                    if ($value !== strip_tags($value)) {
+                        $fail("Trường {$attribute} không được chứa thẻ HTML.");
+                    }
+                },
+            ],
+            'address' => [
+                'nullable',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    $trimmed = preg_replace('/[\s\x{3000}]+/u', '', $value);
+                    if ($trimmed === '') {
+                        $fail("Trường {$attribute} không được phép chỉ chứa khoảng trắng.");
+                    }
+                    if ($value !== strip_tags($value)) {
+                        $fail("Trường {$attribute} không được chứa thẻ HTML.");
+                    }
+                },
+            ],
             'phone' => 'nullable|digits:10',
             'role' => 'required|in:customer,admin',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'username.required' => 'Tên đăng nhập không được bỏ trống.',
-            'username.unique' => 'Tên đăng nhập đã tồn tại.',
-            'password.required' => 'Mật khẩu không được bỏ trống.',
-            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
-            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
-            'email.email' => 'Email không đúng định dạng.',
-            'email.unique' => 'Email đã tồn tại.',
-            'full_name.required' => 'Họ và tên không được bỏ trống.',
-            'full_name.max' => 'Họ và tên không được dài quá 255 ký tự.',
-            'address.max' => 'Địa chỉ không được dài quá 255 ký tự.',
-            'phone.digits' => 'Số điện thoại phải đúng 10 chữ số và không được chứa ký tự khác.',
-            'role.required' => 'Vai trò không được bỏ trống.',
-            'role.in' => 'Vai trò không hợp lệ.',
-            'image.image' => 'File phải là ảnh.',
-            'image.mimes' => 'Ảnh phải có định dạng jpeg, png, jpg hoặc gif.',
-            'image.max' => 'Ảnh không được vượt quá 2MB.',
         ]);
+        
 
         $user = new User($request->except('password', 'password_confirmation', 'image'));
         $user->password = Hash::make($request->password);
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
+            $ext = strtolower($file->getClientOriginalExtension());
+            if ($ext === 'pdf') {
+                return back()->withErrors(['image' => 'File PDF không được phép tải lên.'])->withInput();
+            }
             $filename = time() . '_' . $file->getClientOriginalName();
             $destination = public_path('assets/images');
             
@@ -95,50 +138,73 @@ class UserController extends Controller
     }
 
 
-    public function edit(User $user)
+    public function edit(string $token)
     {
-        //dd($user->id, $user->hash_id);
-        
-        return view('admin.users.edit', compact('user'));
+        try {
+            $user = User::where('token', $token)->firstOrFail();
+            return view('admin.users.edit', compact('user'));
+        } catch (ModelNotFoundException $e) {
+            return view('errors.custom', ['message' => 'Người dùng không tồn tại hoặc token không hợp lệ.']);
+        }
     }
 
-    public function update(Request $request, User $user)
+
+        public function update(Request $request, string $token)
     {
+        $request->merge([
+            'phone' => $this->convertFullWidthNumberToHalfWidth($request->input('phone', '')),
+        ]);
+        
+        $user = User::where('token', $token)->firstOrFail();
         $request->validate([
-            'username' => ['required', Rule::unique('users')->ignore($user->id)],
+            //'username' => ['required', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|min:6|confirmed',
             'email' => ['nullable', 'email', Rule::unique('users')->ignore($user->id)],
-            'full_name' => 'required',
-            'address' => 'nullable',
+            'full_name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    $trimmed = preg_replace('/[\s\x{3000}]+/u', '', $value);
+                    if ($trimmed === '') {
+                        $fail("Trường {$attribute} không được phép chỉ chứa khoảng trắng.");
+                    }
+                    if ($value !== strip_tags($value)) {
+                        $fail("Trường {$attribute} không được chứa thẻ HTML.");
+                    }
+                },
+            ],
+            'address' => [
+                'nullable',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    $trimmed = preg_replace('/[\s\x{3000}]+/u', '', $value);
+                    if ($trimmed === '') {
+                        $fail("Trường {$attribute} không được phép chỉ chứa khoảng trắng.");
+                    }
+                    if ($value !== strip_tags($value)) {
+                        $fail("Trường {$attribute} không được chứa thẻ HTML.");
+                    }
+                },
+            ],
             'phone' => 'nullable|digits:10',
             'role' => 'required|in:customer,admin',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'username.required' => 'Tên đăng nhập không được bỏ trống.',
-                'username.unique' => 'Tên đăng nhập đã tồn tại.',
-                'password.required' => 'Mật khẩu không được bỏ trống.',
-                'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
-                'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
-                'email.email' => 'Email không đúng định dạng.',
-                'email.unique' => 'Email đã tồn tại.',
-                'full_name.required' => 'Họ và tên không được bỏ trống.',
-                'full_name.max' => 'Họ và tên không được dài quá 255 ký tự.',
-                'address.max' => 'Địa chỉ không được dài quá 255 ký tự.',
-                'phone.digits' => 'Số điện thoại phải đúng 10 chữ số và không được chứa ký tự khác.',
-                'role.required' => 'Vai trò không được bỏ trống.',
-                'role.in' => 'Vai trò không hợp lệ.',
-                'image.image' => 'File phải là ảnh.',
-                'image.mimes' => 'Ảnh phải có định dạng jpeg, png, jpg hoặc gif.',
-                'image.max' => 'Ảnh không được vượt quá 2MB.',
         ]);
+        
+        
+        $userUpdatedAtIso = optional($user->updated_at)->toAtomString();
 
-        $userUpdatedAtIso = optional($user->updated_at)->toISOString();
-
-        if (!$request->updated_at || !$userUpdatedAtIso || $request->updated_at !== $userUpdatedAtIso) {
-            return back()
-                ->withErrors(['error' => 'Người khác đã thay đổi dữ liệu này. Vui lòng tải lại trang và thử lại.'])
-                ->withInput();
+        if (
+            !$request->updated_at ||
+            !$user->updated_at ||
+            $request->updated_at !== $user->updated_at->format('Y-m-d H:i:s')
+        ) {
+            return back()->withErrors(['error' => 'Người khác đã thay đổi dữ liệu này. Vui lòng tải lại trang và thử lại.'])->withInput();
         }
+        
+        
 
         DB::beginTransaction();
         try {
@@ -150,6 +216,10 @@ class UserController extends Controller
 
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
+                $ext = strtolower($file->getClientOriginalExtension());
+                if ($ext === 'pdf') {
+                    return back()->withErrors(['image' => 'File PDF không được phép tải lên.'])->withInput();
+                }
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $destination = public_path('assets/images');
                 
@@ -180,24 +250,19 @@ class UserController extends Controller
 
 
 
-    public function destroy(string $hashId)
+    public function destroy(string $token)
     {
-        $decoded = \Vinkla\Hashids\Facades\Hashids::decode($hashId);
-    
-        if (count($decoded) === 0) {
-            return redirect()->route('user.index')->withErrors(['error' => 'Người dùng không tồn tại.']);
-        }
-    
-        $user = User::find($decoded[0]);
-    
+        $user = User::where('token', $token)->first();
+
         if (!$user) {
             return redirect()->route('user.index')->withErrors(['error' => 'Người dùng không tồn tại.']);
         }
-    
+
         $user->delete();
-    
+
         return redirect()->route('user.index')->with('success', 'Xoá người dùng thành công.');
     }
+
     
     public function suggestions(Request $request)
     {

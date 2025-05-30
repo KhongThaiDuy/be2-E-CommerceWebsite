@@ -3,8 +3,18 @@
 @section('content')
     <div class="container mx-auto">
         <h1 class="text-2xl font-semibold mb-4">Edit User: {{ $user->full_name }}</h1>
-        <form action="{{ route('user.update', ['user' => $user->hash_id]) }}" method="POST">
-        <input type="hidden" name="updated_at" value="{{ optional($user->updated_at)->toISOString() }}">
+        @if ($errors->any())
+            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                <strong>Vui lòng sửa các lỗi sau:</strong>
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form action="{{ route('user.update', ['token' => $user->token]) }}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="updated_at" value="{{ optional($user->updated_at)->format('Y-m-d H:i:s') }}">
         @csrf
             @method('PUT')
             @if ($errors->has('error'))
@@ -13,9 +23,8 @@
                 </div>
             @endif
             <div>
-                <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
-                <input type="text" id="username" name="username" value="{{ old('username', $user->username) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                @error('username') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
+                <label>Tên đăng nhập</label>
+                <input type="text" name="username" value="{{ old('username', $user->username) }}" readonly>
             </div>
             <div>
                 <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password (leave blank to keep current):</label>
@@ -57,8 +66,10 @@
             <div>
                 <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Image:</label>
                 <input type="file" id="image" name="image" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                @if ($user->image)
-                    <img src="{{ asset('storage/' . $user->image) }}" alt="Current Image" class="mt-2 w-20 h-20 rounded-full">
+                @if ($user->image && file_exists(public_path($user->image)))
+                    <img src="{{ asset($user->image) }}" alt="Current Image" class="mt-2 w-20 h-20 rounded-full">
+                @else
+                    <img src="{{ asset('assets/images/default-avatar.png') }}" alt="Default Image" class="mt-2 w-20 h-20 rounded-full">
                 @endif
                 <small class="text-gray-500">Leave blank to keep the current image.</small>
                 @error('image') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror

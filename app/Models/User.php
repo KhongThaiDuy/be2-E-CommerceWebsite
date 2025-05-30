@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Support\Str;
+
 
 class User extends Authenticatable
 {
@@ -45,5 +47,19 @@ class User extends Authenticatable
         return $this->where('id', $decoded[0])->firstOrFail();
     }
 
-    
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            // Nếu chưa có token, gán một mã ngẫu nhiên dài
+            if (empty($user->token)) {
+                $user->token = Str::random(64);
+            }
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'token'; // Bind route model theo token thay vì id
+    }
+
 }
