@@ -63,14 +63,18 @@
                         <td>{{ ucfirst($user->role) }}</td>
                         <td>
                             @if ($user->image)
-                                <img src="{{ asset($user->image) }}" alt="{{ $user->username }}" class="rounded-circle" width="40" height="40">
+                            <img 
+                                src="{{ $user->image && file_exists(public_path($user->image)) ? asset($user->image) : asset('assets/images/default-avatar.png') }}" 
+                                alt="User Image" 
+                                width="150" 
+                                />
                             @else
                                 <span class="text-muted fst-italic">No image</span>
                             @endif
                         </td>
                         <td class="text-end">
-                        <a href="{{ route('user.edit', $user->hash_id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <form action="{{ route('user.destroy', $user->hash_id) }}" method="POST" class="d-inline delete-form">
+                        <a href="{{ route('user.edit', $user->token) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form action="{{ route('user.destroy', $user->token) }}" method="POST" class="d-inline delete-form">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-outline-danger">

@@ -12,6 +12,10 @@ class RouteServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        parent::boot();
+        Route::bind('token', function ($value) {
+            return User::where('token', $value)->firstOrFail();
+        });       
         // Đăng ký route model binding với hashid
         Route::bind('hashid', function ($value) {
             $decoded = Hashids::decode($value);
@@ -29,5 +33,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
         });
+
+         
     }
 }
