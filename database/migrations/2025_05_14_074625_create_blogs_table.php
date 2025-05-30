@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->text('content');
             $table->string('image')->nullable();
             $table->timestamps(); // create_at và update_at tự động
-
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
