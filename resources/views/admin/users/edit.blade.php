@@ -22,10 +22,18 @@
                     <strong>Lỗi:</strong> {{ $errors->first('error') }}
                 </div>
             @endif
-            <div>
-                <label>Tên đăng nhập</label>
-                <input type="text" name="username" value="{{ old('username', $user->username) }}" readonly>
+            <div class="mb-4">
+                <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Tên đăng nhập</label>
+                <input 
+                    type="text" 
+                    id="username"
+                    name="username" 
+                    value="{{ old('username', $user->username) }}" 
+                    readonly
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-100 cursor-not-allowed"
+                >
             </div>
+
             <div>
                 <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password (leave blank to keep current):</label>
                 <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
