@@ -55,19 +55,52 @@ class ProductController extends Controller
         return view('admin.product.create', compact('categories'));
     }
 
+    private function trimUnicodeSpace($value)
+    {
+        if ($value === null) {
+            return $value;
+        }
+        // Xóa khoảng trắng thường và khoảng trắng Unicode 2 bytes (U+3000)
+        return preg_replace('/^[\s\x{3000}]+|[\s\x{3000}]+$/u', '', $value);
+    }
+
     // Lưu sản phẩm mới
     public function store(Request $request)
     {
+        $request->merge([
+            'product_name' => $this->trimUnicodeSpace($request->input('product_name')),
+        ]);
         $request->validate([
             'product_name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer',
+            'price' => 'required|numeric|max:999999999',
+            'quantity' => 'required|integer|max:999999999',
             'category_id' => 'required|exists:categories,category_id',
             'image1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'image2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'image3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'rating' => 'nullable|integer|min:1|max:5',
+            'rating' => 'required|integer|min:1|max:5',
+        ], [
+            'product_name.required' => 'Tên sản phẩm là bắt buộc và không được để trống hoặc toàn khoảng trắng.',
+            'product_name.string' => 'Tên sản phẩm không hợp lệ.',
+            'price.required' => 'Giá là trường bắt buộc.',
+            'price.numeric' => 'Giá không hợp lệ và bắt buộc phải là số nguyên.',
+            'quantity.required' => 'Số lượng là trường bắt buộc.',
+            'quantity.integer' => 'Số lượng không hợp lệ và bắt buộc phải là số nguyên.',
+            'category_id.required' => 'Danh mục là bắt buộc.',
+            'category_id.exists' => 'Danh mục không tồn tại.',
+            'image1.image' => 'Ảnh 1 phải là file ảnh.',
+            'image1.mimes' => 'Ảnh 1 phải có định dạng jpeg, png, jpg, gif.',
+            'image1.max' => 'Ảnh 1 không được lớn hơn 2MB.',
+            'image2.image' => 'Ảnh 2 phải là file ảnh.',
+            'image2.mimes' => 'Ảnh 2 phải có định dạng jpeg, png, jpg, gif.',
+            'image2.max' => 'Ảnh 2 không được lớn hơn 2MB.',
+            'image3.image' => 'Ảnh 3 phải là file ảnh.',
+            'image3.mimes' => 'Ảnh 3 phải có định dạng jpeg, png, jpg, gif.',
+            'image3.max' => 'Ảnh 3 không được lớn hơn 2MB.',
+            'rating.integer' => 'Đánh giá phải là số nguyên.',
+            'rating.min' => 'Đánh giá phải lớn hơn hoặc bằng 1.',
+            'rating.max' => 'Đánh giá phải nhỏ hơn hoặc bằng 5.',
         ]);
 
         $product = new Product([
@@ -128,25 +161,61 @@ class ProductController extends Controller
 
 
     // Hiển thị form sửa sản phẩm
-    public function edit(Product $product)
+    public function edit($id)
     {
-        $categories = Category::all(); // Lấy tất cả danh mục
+        if (!is_numeric($id)) {
+            return redirect()->route('product.index')->with('error', 'ID sản phẩm không hợp lệ.');
+        }
+
+        $product = Product::find($id);
+        if (!$product) {
+            return redirect()->route('product.index')->with('error', 'Sản phẩm không tồn tại.');
+        }
+
+        $categories = Category::all();
         return view('admin.product.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, Product $product)
+
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'product_name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer',
-            'category_id' => 'required|exists:categories,category_id',
-            'image1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'image2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'image3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'rating' => 'nullable|integer|min:1|max:5',
+        if (!is_numeric($id)) {
+            return redirect()->route('product.index')->with('error', 'ID sản phẩm không hợp lệ.');
+        }
+
+        $product = Product::find($id);
+        if (!$product) {
+            return redirect()->route('product.index')->with('error', 'Sản phẩm không tồn tại.');
+        }
+        $request->merge([
+            'product_name' => $this->trimUnicodeSpace($request->input('product_name')),
         ]);
+
+        $request->validate(
+            [
+                'product_name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric',
+                'quantity' => 'required|integer',
+                'category_id' => 'required|exists:categories,category_id',
+                'image1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'rating' => 'required|integer|min:1|max:5',
+            ],
+            [
+                'product_name.required' => 'Tên sản phẩm là bắt buộc và không được để trống hoặc toàn khoảng trắng.',
+                'product_name.string' => 'Tên sản phẩm không hợp lệ.',
+                'price.required' => 'Giá là trường bắt buộc.',
+                'price.numeric' => 'Giá không hợp lệ và bắt buộc phải là số nguyên.',
+                'quantity.required' => 'Số lượng là trường bắt buộc.',
+                'quantity.integer' => 'Số lượng không hợp lệ và phải là số nguyên.',
+                'rating.required' => 'Đánh giá là trường bắt buộc.',
+                'rating.integer' => 'Đánh giá phải là số nguyên.',
+                'rating.min' => 'Đánh giá phải lớn hơn hoặc bằng 1.',
+                'rating.max' => 'Đánh giá phải nhỏ hơn hoặc bằng 5.',
+            ]
+        );
 
         if ($request->input('updated_at') !== $product->updated_at->toDateTimeString()) {
             return redirect()->back()->withInput()->withErrors([

@@ -109,7 +109,7 @@
   <div class="alert alert-danger">
     {{ session('error') }}
   </div>
-@endif
+@endif  
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
